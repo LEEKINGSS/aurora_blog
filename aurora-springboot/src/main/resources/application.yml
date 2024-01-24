@@ -104,5 +104,5 @@ qq:
   user-info-url: https://graph.qq.com/user/get_user_info?openid={openid}&access_token={access_token}&oauth_consumer_key={oauth_consumer_key}
 
 baidu:
-  client-id: 百度apikey
-  client-secret: 百度api密码
+  client-id: 百度api key
+  client-secret: 百度api 密码
