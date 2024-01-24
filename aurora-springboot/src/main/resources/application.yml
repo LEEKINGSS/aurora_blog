@@ -1,0 +1,108 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://数据库ip:端口/aurora?serverTimezone=Asia/Shanghai&allowMultiQueries=true
+    username: 数据库用户名
+    password: 数据库密码
+    hikari:
+      minimum-idle: 10
+      idle-timeout: 180000
+      maximum-pool-size: 100
+      auto-commit: true
+      pool-name: MyHikariCP
+      max-lifetime: 60000
+      connection-timeout: 30000
+      connection-test-query: SELECT 1
+
+  redis:
+    host: redis地址
+    port: 6379
+    password: redis密码
+    database: 0
+    lettuce:
+      pool:
+        min-idle: 10
+        max-idle: 100
+        max-active: 100
+        max-wait: 10000
+
+  rabbitmq:
+    host: rabbit地址
+    port: 5672
+    username: guest
+    password: guest
+    listener:
+      simple:
+        retry:
+          enabled: true
+          max-attempts: 3
+          initial-interval: 3000
+
+  elasticsearch:
+    rest:
+      uris: es地址
+
+  mail:
+    host: 邮箱地址
+    username: 邮箱名称
+    password: 邮箱密码
+    default-encoding: UTF-8
+    protocol: smtp
+    port: 465
+    properties:
+      mail:
+        smtp:
+          auth: true
+          socketFactory:
+            class: javax.net.ssl.SSLSocketFactory
+            port: 465
+          ssl:
+            enable: true
+          starttls:
+            enable: true
+            required: true
+
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+
+mybatis-plus:
+  mapper-locations: classpath:mapper/*.xml
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    map-underscore-to-camel-case: true
+
+search:
+  mode: elasticsearch
+
+upload:
+  mode: oss
+  oss:
+    url: 阿里云oss地址
+    endpoint: oss-cn-beijing.aliyuncs.com
+    accessKeyId: key
+    accessKeySecret: secret
+    bucketName: 桶名称
+  minio:
+    url: http://minio的ip:9000/
+    endpoint: http://minio的ip:9000
+    accesskey: 用户名
+    secretKey: 密码
+    bucketName: 桶的名称
+
+website:
+  url: 网站域名
+
+qq:
+  app-id: qq互联id
+  check-token-url: https://graph.qq.com/oauth2.0/me?access_token={access_token}
+  user-info-url: https://graph.qq.com/user/get_user_info?openid={openid}&access_token={access_token}&oauth_consumer_key={oauth_consumer_key}
+
+baidu:
+  client-id: 百度api key
+  client-secret: 百度api 密码
