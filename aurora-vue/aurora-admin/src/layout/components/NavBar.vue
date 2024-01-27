@@ -18,7 +18,7 @@
           <el-avatar :size="40" :src="this.$store.state.userInfo.avatar" />
           <i class="el-icon-caret-bottom" />
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item command="setting"> <i class="el-icon-s-custom" />个人中心 </el-dropdown-item>
+            <el-dropdown-item command="setting"><i class="el-icon-s-custom" />个人中心</el-dropdown-item>
             <el-dropdown-item command="logout" divided>
               <i class="iconfont el-icon-mytuichu" />退出登录
             </el-dropdown-item>
@@ -40,6 +40,7 @@
 
 <script>
 import { resetRouter } from '@/router'
+
 export default {
   created() {
     let matched = this.$route.matched.filter((item) => item.name)
@@ -50,7 +51,7 @@ export default {
     this.breadcrumbs = matched
     this.$store.commit('saveTab', this.$route)
   },
-  data: function () {
+  data: function() {
     return {
       isSearch: false,
       fullscreen: false,
@@ -90,6 +91,7 @@ export default {
     },
     fullScreen() {
       let element = document.documentElement
+      let icon = document.querySelector('.screen-full i')
       if (this.fullscreen) {
         if (document.exitFullscreen) {
           document.exitFullscreen()
@@ -100,6 +102,8 @@ export default {
         } else if (document.msExitFullscreen) {
           document.msExitFullscreen()
         }
+        icon.classList.remove('el-icon-mykuozhan')
+        icon.classList.add('el-icon-myicwindowzoom48px')
       } else {
         if (element.requestFullscreen) {
           element.requestFullscreen()
@@ -110,13 +114,15 @@ export default {
         } else if (element.msRequestFullscreen) {
           element.msRequestFullscreen()
         }
+        icon.classList.remove('el-icon-myicwindowzoom48px')
+        icon.classList.add('el-icon-mykuozhan')
       }
       this.fullscreen = !this.fullscreen
     }
   },
   computed: {
     isActive() {
-      return function (tab) {
+      return function(tab) {
         if (tab.path == this.$route.path) {
           return 'tabs-view-item-active'
         }
@@ -139,17 +145,20 @@ export default {
   height: 50px;
   box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
 }
+
 .hambuger-container {
   font-size: 1.25rem;
   cursor: pointer;
   margin-right: 24px;
 }
+
 .tabs-wrapper {
   overflow-x: auto;
   overflow-y: hidden;
   white-space: nowrap;
   width: 95%;
 }
+
 .tabs-view-container {
   display: flex;
   position: relative;
@@ -160,6 +169,7 @@ export default {
   border-bottom: 1px solid #d8dce5;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 0 3px 0 rgba(0, 0, 0, 0.04);
 }
+
 .tabs-view-item {
   display: inline-block;
   cursor: pointer;
@@ -173,6 +183,7 @@ export default {
   margin-top: 4px;
   margin-left: 5px;
 }
+
 .tabs-close-item {
   position: absolute;
   right: 10px;
@@ -188,6 +199,7 @@ export default {
   margin-top: 4px;
   margin-left: 5px;
 }
+
 .tabs-view-item-active {
   display: inline-block;
   cursor: pointer;
@@ -201,6 +213,7 @@ export default {
   color: #fff;
   border-color: #42b983;
 }
+
 .tabs-view-item-active:before {
   content: '';
   background: #fff;
@@ -211,32 +224,39 @@ export default {
   position: relative;
   margin-right: 2px;
 }
+
 .el-icon-close {
   padding: 0.1rem;
 }
+
 .el-icon-close:hover {
   border-radius: 50%;
   background: #b4bccc;
   transition-duration: 0.3s;
 }
+
 .right-menu {
   margin-left: auto;
   display: flex;
   align-items: center;
 }
+
 .el-icon-caret-bottom {
   margin-left: 0.5rem;
   font-size: 0.75rem;
 }
+
 .screen-full {
   cursor: pointer;
   margin-right: 1rem;
   font-size: 1.25rem;
 }
+
 *::-webkit-scrollbar {
   width: 0.5rem;
   height: 6px;
 }
+
 *::-webkit-scrollbar-thumb {
   border-radius: 0.5rem;
   background-color: rgba(144, 147, 153, 0.3);

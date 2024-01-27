@@ -1,174 +1,200 @@
 @font-face {
-  font-family: 'iconfont';
-  src: url('iconfont.eot?t=1642953623912');
-  src: url('iconfont.eot?t=1642953623912#iefix') format('embedded-opentype'),
-    url('iconfont.woff2?t=1642953623912') format('woff2'), url('iconfont.woff?t=1642953623912') format('woff'),
-    url('iconfont.ttf?t=1642953623912') format('truetype'), url('iconfont.svg?t=1642953623912#iconfont') format('svg');
+  font-family: 'icomoon';
+  src:  url('fonts/icomoon.eot?1f95je');
+  src:  url('fonts/icomoon.eot?1f95je#iefix') format('embedded-opentype'),
+  url('fonts/icomoon.ttf?1f95je') format('truetype'),
+  url('fonts/icomoon.woff?1f95je') format('woff'),
+  url('fonts/icomoon.svg?1f95je#icomoon') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
 }
 
 .iconfont {
-  font-family: 'iconfont' !important;
+  font-family: 'icomoon' !important;
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 .el-icon-myiconfontdongtaidianji:before {
-  content: '\e62f';
+  content: '\e900';
 }
 
 .el-icon-myzhiding:before {
-  content: '\e64a';
+  content: '\e9c6';
 }
 
 .el-icon-mypinglun:before {
-  content: '\e63a';
+  content: '\e905';
 }
 
 .el-icon-mybiaoqing:before {
-  content: '\e644';
+  content: '\e9e1';
 }
 
 .el-icon-mytupian:before {
-  content: '\e691';
+  content: '\e911';
 }
 
 .el-icon-myfabusekuai:before {
-  content: '\ec46';
+  content: '\e906';
 }
 
 .el-icon-mygongkai:before {
-  content: '\e6a9';
+  content: '\e9ce';
 }
 
 .el-icon-mycaogaoxiang:before {
-  content: '\e726';
+  content: '\e901';
 }
 
 .el-icon-myyemianpeizhi:before {
-  content: '\e61f';
+  content: '\e994';
 }
 
 .el-icon-myjiekouguanli:before {
-  content: '\e624';
+  content: '\e902';
 }
 
 .el-icon-mydaohanglantubiao_quanxianguanli:before {
-  content: '\e604';
+  content: '\ea81';
 }
 
 .el-icon-myhuishouzhan:before {
-  content: '\e7f2';
+  content: '\e90d';
 }
 
 .el-icon-myzhaopian:before {
-  content: '\e623';
+  content: '\e90e';
 }
 
 .el-icon-myFiles-59:before {
-  content: '\e7f3';
+  content: '\e909';
 }
 
 .el-icon-myimage-fill:before {
-  content: '\eb61';
+  content: '\e911';
 }
 
 .el-icon-myjiaoseliebiao:before {
-  content: '\e610';
+  content: '\e90b';
 }
 
 .el-icon-mycaozuorizhi:before {
-  content: '\e7e8';
+  content: '\e922';
 }
 
 .el-icon-mycaidan:before {
-  content: '\e60e';
+  content: '\eac2';
 }
 
 .el-icon-myfabiaowenzhang:before {
-  content: '\e69e';
+  content: '\e90c';
 }
 
 .el-icon-mywenzhangliebiao:before {
-  content: '\e62c';
+  content: '\e916';
 }
 
 .el-icon-myyonghuliebiao:before {
-  content: '\e613';
+  content: '\e923';
 }
 
 .el-icon-myxiaoxi:before {
-  content: '\e60d';
+  content: '\e96c';
 }
 
 .el-icon-myliuyan:before {
-  content: '\e606';
+  content: '\e900';
 }
 
 .el-icon-myfenlei:before {
-  content: '\e86c';
+  content: '\e915';
 }
 
 .el-icon-myshouye:before {
-  content: '\e61e';
+  content: '\e90f';
 }
 
 .el-icon-mywendang:before {
-  content: '\e622';
+  content: '\e926';
 }
 
 .el-icon-myxitong:before {
-  content: '\e600';
+  content: '\e9c9';
 }
 
 .el-icon-mypinglunzu:before {
-  content: '\e765';
+  content: '\e96d';
 }
 
 .el-icon-myshezhi:before {
-  content: '\e654';
+  content: '\e994';
 }
 
 .el-icon-mydashujukeshihuaico-:before {
-  content: '\e7ff';
+  content: '\e9cb';
 }
 
 .el-icon-myicontag:before {
-  content: '\e61d';
+  content: '\e904';
 }
 
 .el-icon-myliebiao:before {
-  content: '\e645';
+  content: '\e9bb';
 }
 
 .el-icon-myuser:before {
-  content: '\e607';
+  content: '\e971';
 }
 
 .el-icon-myfangwenliang:before {
-  content: '\e676';
+  content: '\e972';
 }
 
 .el-icon-mymima:before {
-  content: '\e62e';
+  content: '\e90a';
 }
 
 .el-icon-mytuichu:before {
-  content: '\e6c2';
+  content: '\e908';
 }
 
 .el-icon-myicwindowzoom48px:before {
-  content: '\e603';
+  content: '\e989';
 }
 
 .el-icon-mydianzan:before {
-  content: '\e60c';
+  content: '\e907';
 }
 
 .el-icon-mywenzhang-copy:before {
-  content: '\e643';
+  content: '\e926';
 }
 
 .el-icon-myguanyuwo:before {
-  content: '\e62b';
+  content: '\e976';
 }
+
+.el-icon-mynote:before {
+  content: '\e91f';
+}
+
+.el-icon-mykuozhan:before {
+  content: '\e98a';
+}
+
+.el-icon-myrizhi:before {
+  content: '\e912';
+}
+
+.el-icon-myrizhi_yichang:before {
+  content: '\e913';
+}
+
+.el-icon-myrizhi_caozuo:before {
+  content: '\e914';
+}
+
+
