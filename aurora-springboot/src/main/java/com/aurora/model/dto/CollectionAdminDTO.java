@@ -8,25 +8,20 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 @Builder
-public class TagAdminDTO {
+@NoArgsConstructor
+@AllArgsConstructor
+public class CollectionAdminDTO {
 
     /**
-     * 标签id
+     * 合集id
      */
     private Integer id;
 
     /**
-     * 标签名
+     * 合集名
      */
-    private String tagName;
-
-    /**
-     * 文章数量
-     */
-    private Integer articleCount;
+    private String collectionName;
 
     /**
      * 笔记数量

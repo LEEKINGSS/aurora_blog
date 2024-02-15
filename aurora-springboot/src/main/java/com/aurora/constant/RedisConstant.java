@@ -8,7 +8,15 @@ public interface RedisConstant {
 
     String BLOG_VIEWS_COUNT = "blog_views_count";
 
+    /**
+     * 文章浏览量
+     */
     String ARTICLE_VIEWS_COUNT = "article_views_count";
+
+    /**
+     * 笔记浏览量
+     */
+    String NOTE_VIEWS_COUNT = "note_views_count";
 
     String WEBSITE_CONFIG = "website_config";
 

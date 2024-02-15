@@ -28,6 +28,15 @@ function getConfigDate() {
             children: []
         },
         {
+            name: 'Note',
+            path: '/note',
+            i18n: {
+                cn: '笔记',
+                en: 'Note'
+            },
+            children: []
+        },
+        {
             name: 'Talks',
             path: '/talks',
             i18n: {
@@ -113,8 +122,8 @@ function getConfigDate() {
                 },
                 children: []
             }
-            routes[7].children.push(route);
-            routes[7].children.shift();
+            routes[8].children.push(route);
+            routes[8].children.shift();
         }
     });
     console.log(routes);

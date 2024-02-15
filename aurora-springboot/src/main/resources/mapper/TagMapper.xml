@@ -38,22 +38,65 @@
                  JOIN t_article_tag at ON t.id = at.tag_id
         WHERE article_id = #{articleId}
     </select>
+    <select id="listTagNamesByNoteId" resultType="java.lang.String">
+        SELECT tag_name
+        FROM t_tag t
+                 JOIN t_note_tag nt ON t.id = nt.tag_id
+        WHERE note_id = #{noteId}
+    </select>
     <select id="listTagsAdmin" resultType="com.aurora.model.dto.TagAdminDTO">
+        <!--        SELECT-->
+        <!--        t.id,-->
+        <!--        tag_name,-->
+        <!--        COUNT( at.article_id ) AS article_count,-->
+        <!--        t.create_time-->
+        <!--        FROM-->
+        <!--        t_tag t-->
+        <!--        LEFT JOIN t_article_tag at ON t.id = at.tag_id-->
+        <!--        <where>-->
+        <!--            <if test="conditionVO.keywords != null">-->
+        <!--                tag_name like concat('%',#{conditionVO.keywords},'%')-->
+        <!--            </if>-->
+        <!--        </where>-->
+        <!--        GROUP BY-->
+        <!--        t.id-->
+        <!--        LIMIT #{current},#{size}-->
+        SELECT
+        a.id,
+        a.tag_name,
+        article_count,
+        note_count,
+        a.create_time
+        FROM
+        (
         SELECT
         t.id,
         tag_name,
-        COUNT( at.article_id ) AS article_count,
+        COUNT( AT.article_id ) AS article_count,
         t.create_time
         FROM
         t_tag t
-        LEFT JOIN t_article_tag at ON t.id = at.tag_id
-        <where>
-            <if test="conditionVO.keywords != null">
-                tag_name like concat('%',#{conditionVO.keywords},'%')
-            </if>
-        </where>
+        LEFT JOIN t_article_tag AT ON t.id = AT.tag_id
         GROUP BY
         t.id
+        ) a
+        LEFT JOIN (
+        SELECT
+        t.id,
+        tag_name,
+        COUNT( AT.note_id ) AS note_count,
+        t.create_time
+        FROM
+        t_tag t
+        LEFT JOIN t_note_tag AT ON t.id = AT.tag_id
+        GROUP BY
+        t.id
+        ) n ON a.id = n.id
+        <where>
+            <if test="conditionVO.keywords != null">
+                a.tag_name like concat('%',#{conditionVO.keywords},'%')
+            </if>
+        </where>
         LIMIT #{current},#{size}
     </select>
 </mapper>

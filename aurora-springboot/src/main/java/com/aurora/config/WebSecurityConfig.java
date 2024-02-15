@@ -52,12 +52,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return new AccessDecisionManagerImpl();
     }
 
+    /**
+     * 用户认证管理器
+     */
     @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
 
+    /**
+     * 选择加密方式
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -80,6 +86,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 })
                 .anyRequest().permitAll()
                 .and()
+                // 关闭csrf
                 .csrf().disable().exceptionHandling()
                 .authenticationEntryPoint(authenticationEntryPoint)
                 .accessDeniedHandler(accessDeniedHandler)

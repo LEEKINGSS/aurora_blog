@@ -15,7 +15,7 @@
         type="danger"
         size="small"
         icon="el-icon-delete"
-        :disabled="articleIds.length == 0"
+        :disabled="noteIds.length == 0"
         @click="updateIsDelete = true">
         批量删除
       </el-button>
@@ -24,7 +24,7 @@
         type="danger"
         size="small"
         icon="el-icon-delete"
-        :disabled="articleIds.length == 0"
+        :disabled="noteIds.length == 0"
         @click="remove = true">
         批量删除
       </el-button>
@@ -32,25 +32,26 @@
         type="success"
         size="small"
         icon="el-icon-download"
-        :disabled="articleIds.length == 0"
+        :disabled="noteIds.length == 0"
         style="margin-right: 1rem"
         @click="isExport = true">
         批量导出
       </el-button>
       <el-upload
-        action="/api/admin/articles/import"
+        action="/api/admin/notes/import"
         multiple
         :limit="9"
         :show-file-list="false"
         :headers="uploadHeaders"
-        :on-success="uploadArticle">
-        <el-button type="primary" size="small" icon="el-icon-upload"> 批量导入 </el-button>
+        :on-success="uploadNote"
+        :data="{'type': note}">
+        <el-button type="primary" size="small" icon="el-icon-upload"> 批量导入</el-button>
       </el-upload>
       <div style="margin-left: auto">
         <el-select
           clearable
           v-model="type"
-          placeholder="请选择文章类型"
+          placeholder="请选择笔记类型"
           size="small"
           style="margin-right: 1rem; width: 180px">
           <el-option label="全部" value="" />
@@ -59,12 +60,12 @@
         <el-select
           clearable
           size="small"
-          v-model="categoryId"
+          v-model="collectionId"
           filterable
-          placeholder="请选择分类"
+          placeholder="请选择合集"
           style="margin-right: 1rem; width: 180px">
           <el-option label="全部" value="" />
-          <el-option v-for="item in categories" :key="item.id" :label="item.categoryName" :value="item.id" />
+          <el-option v-for="item in collections" :key="item.id" :label="item.collectionName" :value="item.id" />
         </el-select>
         <el-select
           clearable
@@ -81,23 +82,23 @@
           v-model="keywords"
           prefix-icon="el-icon-search"
           size="small"
-          placeholder="请输入文章名"
+          placeholder="请输入笔记名"
           style="width: 200px"
-          @keyup.enter.native="searchArticles" />
-        <el-button type="primary" size="small" icon="el-icon-search" style="margin-left: 1rem" @click="searchArticles">
+          @keyup.enter.native="searchNotes" />
+        <el-button type="primary" size="small" icon="el-icon-search" style="margin-left: 1rem" @click="searchNotes">
           搜索
         </el-button>
       </div>
     </div>
-    <el-table border :data="articles" @selection-change="selectionChange" v-loading="loading">
+    <el-table border :data="notes" @selection-change="selectionChange" v-loading="loading">
       <el-table-column type="selection" width="55" />
-      <el-table-column prop="articleCover" label="文章封面" width="180" align="center">
+      <el-table-column prop="noteCover" label="笔记封面" width="180" align="center">
         <template slot-scope="scope">
           <el-image
             class="article-cover"
             :src="
-              scope.row.articleCover
-                ? scope.row.articleCover
+              scope.row.noteCover
+                ? scope.row.noteCover
                 : 'https://liking.oss-cn-wulanchabu.aliyuncs.com/aurora/404/4c480d324fedddd4e55ae2438251871.jpg'
             " />
           <i v-if="scope.row.status == 1" class="iconfont el-icon-mygongkai article-status-icon" />
@@ -105,8 +106,8 @@
           <i v-if="scope.row.status == 3" class="iconfont el-icon-mycaogaoxiang article-status-icon" />
         </template>
       </el-table-column>
-      <el-table-column prop="articleTitle" label="标题" align="center" />
-      <el-table-column prop="categoryName" label="分类" width="110" align="center" />
+      <el-table-column prop="noteTitle" label="标题" align="center" />
+      <el-table-column prop="collectionName" label="合集" width="110" align="center" />
       <el-table-column prop="tagDTOs" label="标签" width="170" align="center">
         <template slot-scope="scope">
           <el-tag v-for="item of scope.row.tagDTOs" :key="item.tagId" style="margin-right: 0.2rem; margin-top: 0.2rem">
@@ -124,8 +125,8 @@
       </el-table-column>
       <el-table-column prop="type" label="类型" width="80" align="center">
         <template slot-scope="scope">
-          <el-tag :type="articleType(scope.row.type).tagType">
-            {{ articleType(scope.row.type).name }}
+          <el-tag :type="noteType(scope.row.type).tagType">
+            {{ noteType(scope.row.type).name }}
           </el-tag>
         </template>
       </el-table-column>
@@ -133,18 +134,6 @@
         <template slot-scope="scope">
           <i class="el-icon-time" style="margin-right: 5px" />
           {{ scope.row.createTime | date }}
-        </template>
-      </el-table-column>
-      <el-table-column prop="isTop" label="置顶" width="80" align="center">
-        <template slot-scope="scope">
-          <el-switch
-            v-model="scope.row.isTop"
-            active-color="#13ce66"
-            inactive-color="#F4F4F5"
-            :disabled="scope.row.isDelete == 1"
-            :active-value="1"
-            :inactive-value="0"
-            @change="changeTopAndFeatured(scope.row)" />
         </template>
       </el-table-column>
       <el-table-column prop="isFeatured" label="推荐" width="80" align="center">
@@ -156,33 +145,33 @@
             :disabled="scope.row.isDelete == 1"
             :active-value="1"
             :inactive-value="0"
-            @change="changeTopAndFeatured(scope.row)" />
+            @change="changeFeatured(scope.row)" />
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="150">
         <template slot-scope="scope">
-          <el-button type="primary" size="mini" @click="editArticle(scope.row.id)" v-if="scope.row.isDelete == 0">
+          <el-button type="primary" size="mini" @click="editNote(scope.row.id)" v-if="scope.row.isDelete == 0">
             编辑
           </el-button>
           <el-popconfirm
             title="确定删除吗？"
             style="margin-left: 10px"
-            @confirm="updateArticleDelete(scope.row.id)"
+            @confirm="updateNoteDelete(scope.row.id)"
             v-if="scope.row.isDelete == 0">
-            <el-button size="mini" type="danger" slot="reference"> 删除 </el-button>
+            <el-button size="mini" type="danger" slot="reference"> 删除</el-button>
           </el-popconfirm>
           <el-popconfirm
             title="确定恢复吗？"
             v-if="scope.row.isDelete == 1"
-            @confirm="updateArticleDelete(scope.row.id)">
-            <el-button size="mini" type="success" slot="reference"> 恢复 </el-button>
+            @confirm="updateNoteDelete(scope.row.id)">
+            <el-button size="mini" type="success" slot="reference"> 恢复</el-button>
           </el-popconfirm>
           <el-popconfirm
             style="margin-left: 10px"
             v-if="scope.row.isDelete == 1"
             title="确定彻底删除吗？"
-            @confirm="deleteArticles(scope.row.id)">
-            <el-button size="mini" type="danger" slot="reference"> 删除 </el-button>
+            @confirm="deleteNotes(scope.row.id)">
+            <el-button size="mini" type="danger" slot="reference"> 删除</el-button>
           </el-popconfirm>
         </template>
       </el-table-column>
@@ -202,7 +191,7 @@
       <div style="font-size: 1rem">是否删除选中项？</div>
       <div slot="footer">
         <el-button @click="updateIsDelete = false">取 消</el-button>
-        <el-button type="primary" @click="updateArticleDelete(null)"> 确 定 </el-button>
+        <el-button type="primary" @click="updateNoteDelete(null)"> 确 定</el-button>
       </div>
     </el-dialog>
     <el-dialog :visible.sync="remove" width="30%">
@@ -210,15 +199,15 @@
       <div style="font-size: 1rem">是否彻底删除选中项？</div>
       <div slot="footer">
         <el-button @click="remove = false">取 消</el-button>
-        <el-button type="primary" @click="deleteArticles(null)"> 确 定 </el-button>
+        <el-button type="primary" @click="deleteNotes(null)"> 确 定</el-button>
       </div>
     </el-dialog>
     <el-dialog :visible.sync="isExport" width="30%">
       <div class="dialog-title-container" slot="title"><i class="el-icon-warning" style="color: #ff9900" />提示</div>
-      <div style="font-size: 1rem">是否导出选中文章？</div>
+      <div style="font-size: 1rem">是否导出选中笔记？</div>
       <div slot="footer">
         <el-button @click="isExport = false">取 消</el-button>
-        <el-button type="primary" @click="exportArticles(null)"> 确 定 </el-button>
+        <el-button type="primary" @click="exportNotes(null)"> 确 定</el-button>
       </div>
     </el-dialog>
   </el-card>
@@ -227,17 +216,18 @@
 <script>
 export default {
   created() {
-    this.current = this.$store.state.pageState.articleList
-    this.listArticles()
-    this.listCategories()
+    this.current = this.$store.state.pageState.noteList
+    this.listNotes()
+    this.listCollections()
     this.listTags()
   },
-  data: function () {
+  data: function() {
     return {
       uploadHeaders: { Authorization: 'Bearer ' + sessionStorage.getItem('token') },
       loading: true,
       updateIsDelete: false,
       remove: false,
+      note: 'note',
       types: [
         {
           value: 1,
@@ -253,13 +243,13 @@ export default {
         }
       ],
       activeStatus: 'all',
-      articles: [],
-      articleIds: [],
-      categories: [],
+      notes: [],
+      noteIds: [],
+      collections: [],
       tags: [],
       keywords: null,
       type: null,
-      categoryId: null,
+      collectionId: null,
       tagId: null,
       isDelete: 0,
       isExport: false,
@@ -270,34 +260,34 @@ export default {
     }
   },
   methods: {
-    selectionChange(articles) {
-      this.articleIds = []
-      articles.forEach((item) => {
-        this.articleIds.push(item.id)
+    selectionChange(notes) {
+      this.noteIds = []
+      notes.forEach((item) => {
+        this.noteIds.push(item.id)
       })
     },
-    searchArticles() {
+    searchNotes() {
       this.current = 1
-      this.listArticles()
+      this.listNotes()
     },
-    editArticle(id) {
-      this.$router.push({ path: '/articles/' + id })
+    editNote(id) {
+      this.$router.push({ path: '/notes/' + id })
     },
-    updateArticleDelete(id) {
+    updateNoteDelete(id) {
       let param = {}
       if (id != null) {
         param.ids = [id]
       } else {
-        param.ids = this.articleIds
+        param.ids = this.noteIds
       }
       param.isDelete = this.isDelete == 0 ? 1 : 0
-      this.axios.put('/api/admin/articles', param).then(({ data }) => {
+      this.axios.put('/api/admin/notes', param).then(({ data }) => {
         if (data.flag) {
           this.$notify.success({
             title: '成功',
             message: data.message
           })
-          this.listArticles()
+          this.listNotes()
         } else {
           this.$notify.error({
             title: '失败',
@@ -307,20 +297,20 @@ export default {
         this.updateIsDelete = false
       })
     },
-    deleteArticles(id) {
+    deleteNotes(id) {
       let param = {}
       if (id == null) {
-        param = { data: this.articleIds }
+        param = { data: this.noteIds }
       } else {
         param = { data: [id] }
       }
-      this.axios.delete('/api/admin/articles/delete', param).then(({ data }) => {
+      this.axios.delete('/api/admin/notes/delete', param).then(({ data }) => {
         if (data.flag) {
           this.$notify.success({
             title: '成功',
             message: data.message
           })
-          this.listArticles()
+          this.listNotes()
         } else {
           this.$notify.error({
             title: '失败',
@@ -330,14 +320,14 @@ export default {
         this.remove = false
       })
     },
-    exportArticles(id) {
+    exportNotes(id) {
       var param = {}
       if (id == null) {
-        param = this.articleIds
+        param = this.noteIds
       } else {
         param = [id]
       }
-      this.axios.post('/api/admin/articles/export', param).then(({ data }) => {
+      this.axios.post('/api/admin/notes/export', param).then(({ data }) => {
         if (data.flag) {
           this.$notify.success({
             title: '成功',
@@ -346,7 +336,7 @@ export default {
           data.data.forEach((item) => {
             this.downloadFile(item)
           })
-          this.listArticles()
+          this.listNotes()
         } else {
           this.$notify.error({
             title: '失败',
@@ -366,13 +356,13 @@ export default {
         iframe.remove()
       }, 5 * 60 * 1000)
     },
-    uploadArticle(data) {
+    uploadNote(data) {
       if (data.flag) {
         this.$notify.success({
           title: '成功',
           message: '导入成功'
         })
-        this.listArticles()
+        this.listNotes()
       } else {
         this.$notify.error({
           title: '失败',
@@ -382,12 +372,12 @@ export default {
     },
     sizeChange(size) {
       this.size = size
-      this.listArticles()
+      this.listNotes()
     },
     currentChange(current) {
       this.current = current
       this.$store.commit('updateArticleListPageState', current)
-      this.listArticles()
+      this.listNotes()
     },
     changeStatus(status) {
       switch (status) {
@@ -415,12 +405,11 @@ export default {
       this.current = 1
       this.activeStatus = status
     },
-    changeTopAndFeatured(article) {
+    changeFeatured(note) {
       this.axios
-        .put('/api/admin/articles/topAndFeatured', {
-          id: article.id,
-          isTop: article.isTop,
-          isFeatured: article.isFeatured
+        .put('/api/admin/notes/featured', {
+          id: note.id,
+          isFeatured: note.isFeatured
         })
         .then(({ data }) => {
           if (data.flag) {
@@ -437,14 +426,14 @@ export default {
           this.remove = false
         })
     },
-    listArticles() {
+    listNotes() {
       this.axios
-        .get('/api/admin/articles', {
+        .get('/api/admin/notes', {
           params: {
             current: this.current,
             size: this.size,
             keywords: this.keywords,
-            categoryId: this.categoryId,
+            collectionId: this.collectionId,
             status: this.status,
             tagId: this.tagId,
             type: this.type,
@@ -452,14 +441,14 @@ export default {
           }
         })
         .then(({ data }) => {
-          this.articles = data.data.records
+          this.notes = data.data.records
           this.count = data.data.count
           this.loading = false
         })
     },
-    listCategories() {
-      this.axios.get('/api/admin/categories/search').then(({ data }) => {
-        this.categories = data.data
+    listCollections() {
+      this.axios.get('/api/admin/collections/search').then(({ data }) => {
+        this.collections = data.data
       })
     },
     listTags() {
@@ -471,28 +460,28 @@ export default {
   watch: {
     type() {
       this.current = 1
-      this.listArticles()
+      this.listNotes()
     },
     categoryId() {
       this.current = 1
-      this.listArticles()
+      this.listNotes()
     },
     tagId() {
       this.current = 1
-      this.listArticles()
+      this.listNotes()
     },
     status() {
       this.current = 1
-      this.listArticles()
+      this.listNotes()
     },
     isDelete() {
       this.current = 1
-      this.listArticles()
+      this.listNotes()
     }
   },
   computed: {
-    articleType() {
-      return function (type) {
+    noteType() {
+      return function(type) {
         var tagType = ''
         var name = ''
         switch (type) {
@@ -516,7 +505,7 @@ export default {
       }
     },
     isActive() {
-      return function (status) {
+      return function(status) {
         return this.activeStatus == status ? 'active-status' : 'status'
       }
     }
@@ -528,28 +517,34 @@ export default {
 .operation-container {
   margin-top: 1.5rem;
 }
+
 .article-status-menu {
   font-size: 14px;
   margin-top: 40px;
   color: #999;
 }
+
 .article-status-menu span {
   margin-right: 24px;
 }
+
 .status {
   cursor: pointer;
 }
+
 .active-status {
   cursor: pointer;
   color: #333;
   font-weight: bold;
 }
+
 .article-cover {
   position: relative;
   width: 100%;
   height: 90px;
   border-radius: 4px;
 }
+
 .article-cover::after {
   content: '';
   background: rgba(0, 0, 0, 0.3);
@@ -559,6 +554,7 @@ export default {
   left: 0;
   right: 0;
 }
+
 .article-status-icon {
   color: #fff;
   font-size: 1.5rem;

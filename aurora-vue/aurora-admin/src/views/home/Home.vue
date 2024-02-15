@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-row :gutter="30">
-      <el-col :span="6">
+      <el-col :span="4">
         <el-card>
           <div class="card-icon-container">
             <i class="iconfont el-icon-myfangwenliang" style="color: #40c9c6" />
@@ -12,7 +12,7 @@
           </div>
         </el-card>
       </el-col>
-      <el-col :span="6">
+      <el-col :span="4">
         <el-card>
           <div class="card-icon-container">
             <i class="iconfont el-icon-myuser" style="color: #34bfa3" />
@@ -23,7 +23,7 @@
           </div>
         </el-card>
       </el-col>
-      <el-col :span="6">
+      <el-col :span="4">
         <el-card>
           <div class="card-icon-container">
             <i class="iconfont el-icon-mywenzhang-copy" style="color: #f4516c" />
@@ -34,7 +34,18 @@
           </div>
         </el-card>
       </el-col>
-      <el-col :span="6">
+      <el-col :span="4">
+        <el-card>
+          <div class="card-icon-container">
+            <i class="iconfont el-icon-mynote" style="color: #f4516c" />
+          </div>
+          <div class="card-desc">
+            <div class="card-title">笔记量</div>
+            <div class="card-count">{{ noteCount }}</div>
+          </div>
+        </el-card>
+      </el-col>
+      <el-col :span="4">
         <el-card>
           <div class="card-icon-container">
             <i class="el-icon-s-comment" style="color: #36a3f7" />
@@ -45,19 +56,33 @@
           </div>
         </el-card>
       </el-col>
+      <el-col :span="4">
+        <el-card>
+          <div class="card-icon-container">
+            <i class="el-icon-s-comment" style="color: #36a3f7" />
+          </div>
+          <div class="card-desc">
+            <div class="card-title">预设值</div>
+            <div class="card-count">0</div>
+          </div>
+        </el-card>
+      </el-col>
     </el-row>
+
     <el-card style="margin-top: 1.25rem">
       <div class="e-title">一周访问量</div>
       <div style="height: 350px">
         <v-chart :options="viewCount" v-loading="loading" />
       </div>
     </el-card>
+
     <el-card style="margin-top: 1.25rem">
       <div class="e-title">文章贡献统计</div>
       <div v-loading="loading">
         <calendar-heatmap :end-date="new Date()" :values="articleStatisticsDTOs" />
       </div>
     </el-card>
+
     <el-row :gutter="20" style="margin-top: 1.25rem">
       <el-col :span="16">
         <el-card>
@@ -76,6 +101,7 @@
         </el-card>
       </el-col>
     </el-row>
+
     <el-row :gutter="20" style="margin-top: 1.25rem">
       <el-col :span="16">
         <el-card>
@@ -100,17 +126,19 @@
         </el-card>
       </el-col>
     </el-row>
+
   </div>
 </template>
 
 <script>
 import '@/assets/js/china'
+
 export default {
   created() {
     this.listUserArea()
     this.getData()
   },
-  data: function () {
+  data: function() {
     return {
       loading: true,
       type: 1,
@@ -118,6 +146,7 @@ export default {
       messageCount: 0,
       userCount: 0,
       articleCount: 0,
+      noteCount: 0,
       articleStatisticsDTOs: [],
       tagDTOs: [],
       viewCount: {
@@ -209,7 +238,7 @@ export default {
       },
       userAreaMap: {
         tooltip: {
-          formatter: function (e) {
+          formatter: function(e) {
             var value = e.value ? e.value : 0
             return e.seriesName + '<br />' + e.name + '：' + value
           }
@@ -344,29 +373,35 @@ export default {
   display: inline-block;
   font-size: 3rem;
 }
+
 .area-wrapper {
   display: flex;
   justify-content: center;
 }
+
 .card-desc {
   font-weight: bold;
   float: right;
 }
+
 .card-title {
   margin-top: 0.3rem;
   line-height: 18px;
   color: rgba(0, 0, 0, 0.45);
   font-size: 1rem;
 }
+
 .card-count {
   margin-top: 0.75rem;
   color: #666;
   font-size: 1.25rem;
 }
+
 .echarts {
   width: 100%;
   height: 100%;
 }
+
 .e-title {
   font-size: 13px;
   color: #202a34;

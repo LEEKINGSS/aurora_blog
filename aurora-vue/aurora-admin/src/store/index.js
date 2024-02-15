@@ -11,6 +11,7 @@ export default new Vuex.Store({
     userInfo: null,
     userMenus: [],
     pageState: {
+      noteList: 1,
       articleList: 1,
       category: 1,
       tag: 1,

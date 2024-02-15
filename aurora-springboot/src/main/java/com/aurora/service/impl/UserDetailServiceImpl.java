@@ -46,6 +46,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
         if (StringUtils.isBlank(username)) {
             throw new BizException("用户名不能为空!");
         }
+        // 通过用户名查询用户信息
         UserAuth userAuth = userAuthMapper.selectOne(new LambdaQueryWrapper<UserAuth>()
                 .select(UserAuth::getId, UserAuth::getUserInfoId, UserAuth::getUsername, UserAuth::getPassword, UserAuth::getLoginType)
                 .eq(UserAuth::getUsername, username));

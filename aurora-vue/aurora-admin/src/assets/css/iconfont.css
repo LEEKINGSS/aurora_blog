@@ -197,4 +197,9 @@
   content: '\e914';
 }
 
+/*合集图标*/
+.el-icon-myheji:before {
+  content: '\e920';
+}
+
 

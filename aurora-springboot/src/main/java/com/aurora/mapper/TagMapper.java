@@ -19,6 +19,8 @@ public interface TagMapper extends BaseMapper<Tag> {
 
     List<String> listTagNamesByArticleId(Integer articleId);
 
+    List<String> listTagNamesByNoteId(Integer noteId);
+
     List<TagAdminDTO> listTagsAdmin(@Param("current") Long current, @Param("size") Long size, @Param("conditionVO") ConditionVO conditionVO);
 
 }

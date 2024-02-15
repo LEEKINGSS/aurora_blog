@@ -11,6 +11,8 @@ public enum FilePathEnum {
 
     ARTICLE("aurora/articles/", "文章图片路径"),
 
+    NOTE("aurora/notes/", "笔记图片路径"),
+
     VOICE("aurora/voice/", "音频路径"),
 
     PHOTO("aurora/photos/", "相册路径"),
