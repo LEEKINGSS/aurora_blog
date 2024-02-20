@@ -166,10 +166,12 @@ import emitter from '@/utils/mitt'
 import { v3ImgPreviewFn } from 'v3-img-preview'
 import api from '@/api/api'
 import markdownToHtml from '@/utils/markdown'
+import ObSkeleton from '@/components/LoadingSkeleton/src/Skeleton.vue'
+import { useAppStore } from '@/stores/app'
 
 export default defineComponent({
   name: 'Article',
-  components: { Sidebar, Comment, SubTitle, ArticleCard, Profile, Sticky, Navigator },
+  components: { ObSkeleton, Sidebar, Comment, SubTitle, ArticleCard, Profile, Sticky, Navigator },
   setup() {
     const proxy: any = getCurrentInstance()?.appContext.config.globalProperties
     const commonStore = useCommonStore()
@@ -179,6 +181,7 @@ export default defineComponent({
     const { t } = useI18n()
     const loading = ref(true)
     const articleRef = ref()
+    const appStore = useAppStore()
     const reactiveData = reactive({
       articleId: '' as any,
       article: '' as any,
@@ -201,6 +204,7 @@ export default defineComponent({
       toPageTop()
       fetchArticle()
       fetchComments()
+      appStore.loadStyle()
     })
     onUnmounted(() => {
       commonStore.resetHeaderImage()
@@ -274,7 +278,7 @@ export default defineComponent({
     }
     const fetchArticle = () => {
       loading.value = true
-      api.getArticeById(reactiveData.articleId).then(({ data }) => {
+      api.getArticleById(reactiveData.articleId).then(({ data }) => {
         if (data.code === 52003) {
           proxy.$notify({
             title: 'Error',

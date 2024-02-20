@@ -85,9 +85,11 @@ import { useUserStore } from '@/stores/user'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import emitter from '@/utils/mitt'
+import SvgIcon from '@/components/SvgIcon/index.vue'
 
 export default defineComponent({
   name: 'ArticleCard',
+  components: { SvgIcon },
   props: ['data'],
   setup(props) {
     const proxy: any = getCurrentInstance()?.appContext.config.globalProperties

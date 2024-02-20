@@ -11,6 +11,9 @@
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
         <result property="collectionName" column="collection_name"/>
+        <result property="noteCount" column="note_count"/>
+        <result property="noteTime" column="note_time"/>
+        <result property="collectionId" column="collection_id"/>
         <association property="author" javaType="com.aurora.entity.UserInfo">
             <result property="nickname" column="author_nickname"/>
             <result property="website" column="author_website"/>
@@ -18,6 +21,7 @@
         </association>
         <collection property="tags" ofType="com.aurora.entity.Tag">
             <result property="tagName" column="tag_name"/>
+            <result property="id" column="tag_id"/>
         </collection>
     </resultMap>
     <resultMap id="NoteDTOResultMap" type="com.aurora.model.dto.NoteDTO">
@@ -31,6 +35,8 @@
         <result property="collectionName" column="collection_name"/>
         <result property="type" column="type"/>
         <result property="originalUrl" column="original_url"/>
+        <result property="noteCount" column="note_count"/>
+        <result property="noteTime" column="note_time"/>
         <association property="author" javaType="com.aurora.entity.UserInfo">
             <result property="nickname" column="author_nickname"/>
             <result property="website" column="author_website"/>
@@ -55,58 +61,62 @@
             <result column="tag_name" property="tagName"/>
         </collection>
     </resultMap>
-<!--    <select id="listTopAndFeaturedArticles" resultMap="ArticleCardDTOResultMap">-->
-<!--        SELECT a.id                            AS id,-->
-<!--               category_id,-->
-<!--               article_cover,-->
-<!--               article_title,-->
-<!--               SUBSTR(article_content, 1, 500) AS article_content,-->
-<!--               is_top,-->
-<!--               is_featured,-->
-<!--               status,-->
-<!--               a.create_time                   AS create_time,-->
-<!--               a.update_time                   AS update_time,-->
-<!--               u.nickname                      AS author_nickname,-->
-<!--               u.website                       AS author_website,-->
-<!--               u.avatar                        AS author_avatar,-->
-<!--               c.category_name                 AS category_name,-->
-<!--               tag_name-->
-<!--        FROM (SELECT id,-->
-<!--                     user_id,-->
-<!--                     category_id,-->
-<!--                     article_cover,-->
-<!--                     article_title,-->
-<!--                     article_content,-->
-<!--                     is_top,-->
-<!--                     is_featured,-->
-<!--                     is_delete,-->
-<!--                     status,-->
-<!--                     create_time,-->
-<!--                     update_time-->
-<!--              FROM t_article) a-->
-<!--                 LEFT JOIN t_article_tag at-->
-<!--                           ON a.id = at.article_id-->
-<!--                 LEFT JOIN t_tag t ON t.id = at.tag_id-->
-<!--                 LEFT JOIN t_category c ON a.category_id = c.id-->
-<!--                 LEFT JOIN t_user_info u ON a.user_id = u.id-->
-<!--        where a.is_delete = 0-->
-<!--          and a.status in (1, 2)-->
-<!--        order by is_top desc, is_featured desc-->
-<!--    </select>-->
+    <!--    <select id="listTopAndFeaturedArticles" resultMap="ArticleCardDTOResultMap">-->
+    <!--        SELECT a.id                            AS id,-->
+    <!--               category_id,-->
+    <!--               article_cover,-->
+    <!--               article_title,-->
+    <!--               SUBSTR(article_content, 1, 500) AS article_content,-->
+    <!--               is_top,-->
+    <!--               is_featured,-->
+    <!--               status,-->
+    <!--               a.create_time                   AS create_time,-->
+    <!--               a.update_time                   AS update_time,-->
+    <!--               u.nickname                      AS author_nickname,-->
+    <!--               u.website                       AS author_website,-->
+    <!--               u.avatar                        AS author_avatar,-->
+    <!--               c.category_name                 AS category_name,-->
+    <!--               tag_name-->
+    <!--        FROM (SELECT id,-->
+    <!--                     user_id,-->
+    <!--                     category_id,-->
+    <!--                     article_cover,-->
+    <!--                     article_title,-->
+    <!--                     article_content,-->
+    <!--                     is_top,-->
+    <!--                     is_featured,-->
+    <!--                     is_delete,-->
+    <!--                     status,-->
+    <!--                     create_time,-->
+    <!--                     update_time-->
+    <!--              FROM t_article) a-->
+    <!--                 LEFT JOIN t_article_tag at-->
+    <!--                           ON a.id = at.article_id-->
+    <!--                 LEFT JOIN t_tag t ON t.id = at.tag_id-->
+    <!--                 LEFT JOIN t_category c ON a.category_id = c.id-->
+    <!--                 LEFT JOIN t_user_info u ON a.user_id = u.id-->
+    <!--        where a.is_delete = 0-->
+    <!--          and a.status in (1, 2)-->
+    <!--        order by is_top desc, is_featured desc-->
+    <!--    </select>-->
     <select id="listNotes" resultMap="NoteCardDTOResultMap">
-        SELECT a.id                            AS id,
+        SELECT a.id                         AS id,
                note_cover,
                note_title,
                SUBSTR(note_content, 1, 500) AS note_content,
                is_featured,
                status,
-               a.create_time                   AS create_time,
-               a.update_time                   AS update_time,
-               u.nickname                      AS author_nickname,
-               u.website                       AS author_website,
-               u.avatar                        AS author_avatar,
-               c.collection_name                 AS collection_name,
-               tag_name
+               a.create_time                AS create_time,
+               a.update_time                AS update_time,
+               u.nickname                   AS author_nickname,
+               u.website                    AS author_website,
+               u.avatar                     AS author_avatar,
+               c.collection_name            AS collection_name,
+               c.id                         AS collection_id,
+               tag_name,
+               nt.tag_id                    AS tag_id,
+               note_count,
+               note_time
         FROM (SELECT id,
                      user_id,
                      collection_id,
@@ -117,70 +127,74 @@
                      is_delete,
                      status,
                      create_time,
-                     update_time
+                     update_time,
+                     note_count,
+                     note_time
               FROM t_note
               where is_delete = 0
                 and status in (1, 2)
               order by id desc
                   LIMIT #{current}, #{size}) a
                  LEFT JOIN t_note_tag nt
-        ON a.id = nt.note_id
-            LEFT JOIN t_tag t ON t.id = nt.tag_id
+                           ON a.id = nt.note_id
+                 LEFT JOIN t_tag t ON t.id = nt.tag_id
+                 LEFT JOIN t_collection c ON a.collection_id = c.id
+                 LEFT JOIN t_user_info u ON a.user_id = u.id
+    </select>
+    <select id="getNotesByCollectionId" resultMap="NoteCardDTOResultMap">
+        SELECT a.id                         AS id,
+               note_cover,
+               note_title,
+               SUBSTR(note_content, 1, 500) AS note_content,
+               is_featured,
+               status,
+               a.create_time                AS create_time,
+               a.update_time                AS update_time,
+               u.nickname                   AS author_nickname,
+               u.website                    AS author_website,
+               u.avatar                     AS author_avatar,
+               c.collection_name              AS collection_name,
+               tag_name,
+               note_count,
+               note_time
+        FROM (SELECT id,
+                     user_id,
+                     collection_id,
+                     note_cover,
+                     note_title,
+                     note_content,
+                     is_featured,
+                     is_delete,
+                     status,
+                     create_time,
+                     update_time,
+                     note_count,
+                     note_time
+              FROM t_note
+              WHERE collection_id = #{collectionId}
+                and is_delete = 0
+                and status in (1, 2)
+              order by id desc
+                  LIMIT #{current}, #{size}) a
+                 LEFT JOIN t_note_tag at
+        ON a.id = at.note_id
+            LEFT JOIN t_tag t ON t.id = at.tag_id
             LEFT JOIN t_collection c ON a.collection_id = c.id
             LEFT JOIN t_user_info u ON a.user_id = u.id
     </select>
-<!--    <select id="getArticlesByCategoryId" resultMap="ArticleCardDTOResultMap">-->
-<!--        SELECT a.id                            AS id,-->
-<!--               article_cover,-->
-<!--               article_title,-->
-<!--               SUBSTR(article_content, 1, 500) AS article_content,-->
-<!--               is_top,-->
-<!--               is_featured,-->
-<!--               status,-->
-<!--               a.create_time                   AS create_time,-->
-<!--               a.update_time                   AS update_time,-->
-<!--               u.nickname                      AS author_nickname,-->
-<!--               u.website                       AS author_website,-->
-<!--               u.avatar                        AS author_avatar,-->
-<!--               c.category_name                 AS category_name,-->
-<!--               tag_name-->
-<!--        FROM (SELECT id,-->
-<!--                     user_id,-->
-<!--                     category_id,-->
-<!--                     article_cover,-->
-<!--                     article_title,-->
-<!--                     article_content,-->
-<!--                     is_top,-->
-<!--                     is_featured,-->
-<!--                     is_delete,-->
-<!--                     status,-->
-<!--                     create_time,-->
-<!--                     update_time-->
-<!--              FROM t_article-->
-<!--              WHERE category_id = #{categoryId}-->
-<!--                and is_delete = 0-->
-<!--                and status in (1, 2)-->
-<!--              order by id desc-->
-<!--              LIMIT #{current} , #{size}) a-->
-<!--                 LEFT JOIN t_article_tag at-->
-<!--                           ON a.id = at.article_id-->
-<!--                 LEFT JOIN t_tag t ON t.id = at.tag_id-->
-<!--                 LEFT JOIN t_category c ON a.category_id = c.id-->
-<!--                 LEFT JOIN t_user_info u ON a.user_id = u.id-->
-<!--    </select>-->
     <select id="getNoteById" resultMap="NoteDTOResultMap">
-        SELECT a.id            AS id,
+        SELECT a.id              AS id,
                note_cover,
                note_title,
                note_content,
                is_featured,
                type,
                original_url,
-               a.create_time   AS create_time,
-               a.update_time   AS update_time,
-               u.nickname      AS author_nickname,
-               u.website       AS author_website,
-               u.avatar        AS author_avatar,
+               a.create_time     AS create_time,
+               a.update_time     AS update_time,
+               u.nickname        AS author_nickname,
+               u.website         AS author_website,
+               u.avatar          AS author_avatar,
                c.collection_name AS collection_name,
                tag_name
         FROM (SELECT id,
@@ -201,25 +215,27 @@
                 and is_delete = 0
                 and status in (1, 2)) a
                  LEFT JOIN t_note_tag at
-                           ON a.id = at.note_id
-                 LEFT JOIN t_tag t ON t.id = at.tag_id
-                 LEFT JOIN t_collection c ON a.collection_id = c.id
-                 LEFT JOIN t_user_info u ON a.user_id = u.id
+        ON a.id = at.note_id
+            LEFT JOIN t_tag t ON t.id = at.tag_id
+            LEFT JOIN t_collection c ON a.collection_id = c.id
+            LEFT JOIN t_user_info u ON a.user_id = u.id
     </select>
     <select id="getPreNoteById" resultMap="NoteCardDTOResultMap">
-        SELECT a.id                            AS id,
+        SELECT a.id                         AS id,
                note_cover,
                note_title,
                SUBSTR(note_content, 1, 500) AS note_content,
                is_featured,
                status,
-               a.create_time                   AS create_time,
-               a.update_time                   AS update_time,
-               u.nickname                      AS author_nickname,
-               u.website                       AS author_website,
-               u.avatar                        AS author_avatar,
-               c.collection_name                 AS collection_name,
-               tag_name
+               a.create_time                AS create_time,
+               a.update_time                AS update_time,
+               u.nickname                   AS author_nickname,
+               u.website                    AS author_website,
+               u.avatar                     AS author_avatar,
+               c.collection_name            AS collection_name,
+               tag_name,
+               note_count,
+               note_time
         FROM (SELECT id,
                      user_id,
                      collection_id,
@@ -230,106 +246,36 @@
                      is_delete,
                      status,
                      create_time,
-                     update_time
+                     update_time,
+                     note_count,
+                     note_time
               FROM t_note
               WHERE id &lt; #{noteId}
                 and is_delete = 0
                 and status in (1, 2)
-              order by id desc
-              limit 0, 1) a
+              order by id desc limit 0, 1) a
                  LEFT JOIN t_note_tag at
-                           ON a.id = at.note_id
-                 LEFT JOIN t_tag t ON t.id = at.tag_id
-                 LEFT JOIN t_collection c ON a.collection_id = c.id
-                 LEFT JOIN t_user_info u ON a.user_id = u.id
+        ON a.id = at.note_id
+            LEFT JOIN t_tag t ON t.id = at.tag_id
+            LEFT JOIN t_collection c ON a.collection_id = c.id
+            LEFT JOIN t_user_info u ON a.user_id = u.id
     </select>
     <select id="getNextNoteById" resultMap="NoteCardDTOResultMap">
-        SELECT a.id                            AS id,
+        SELECT a.id                         AS id,
                note_cover,
                note_title,
                SUBSTR(note_content, 1, 500) AS note_content,
                is_featured,
                status,
-               a.create_time                   AS create_time,
-               a.update_time                   AS update_time,
-               u.nickname                      AS author_nickname,
-               u.website                       AS author_website,
-               u.avatar                        AS author_avatar,
-               c.collection_name                 AS collection_name,
-               tag_name
-        FROM (SELECT id,
-                     user_id,
-                     note_id,
-                     note_cover,
-                     note_title,
-                     note_content,
-                     is_featured,
-                     is_delete,
-                     status,
-                     create_time,
-                     update_time
-              FROM t_note
-              WHERE id &gt; #{noteId}
-                and is_delete = 0
-                and status in (1, 2)
-              order by id
-              limit 0,1) a
-                 LEFT JOIN t_note_tag at
-                           ON a.id = at.note_id
-                 LEFT JOIN t_tag t ON t.id = at.tag_id
-                 LEFT JOIN t_collection c ON a.collection_id = c.id
-                 LEFT JOIN t_user_info u ON a.user_id = u.id
-    </select>
-    <select id="getFirstNote" resultMap="NoteCardDTOResultMap">
-        SELECT a.id                            AS id,
-               note_cover,
-               note_title,
-               SUBSTR(note_content, 1, 500) AS note_content,
-               is_featured,
-               status,
-               a.create_time                   AS create_time,
-               a.update_time                   AS update_time,
-               u.nickname                      AS author_nickname,
-               u.website                       AS author_website,
-               u.avatar                        AS author_avatar,
-               c.collection_name                 AS collection_name,
-               tag_name
-        FROM (SELECT id,
-                     user_id,
-                     note_id,
-                     note_cover,
-                     note_title,
-                     note_content,
-                     is_featured,
-                     is_delete,
-                     status,
-                     create_time,
-                     update_time
-              FROM t_note
-              WHERE is_delete = 0
-                and status in (1, 2)
-              order by id
-              limit 0,1) a
-                 LEFT JOIN t_note_tag at
-                           ON a.id = at.note_id
-                 LEFT JOIN t_tag t ON t.id = at.tag_id
-                 LEFT JOIN t_collection c ON a.collection_id = c.id
-                 LEFT JOIN t_user_info u ON a.user_id = u.id
-    </select>
-    <select id="getLastNote" resultMap="NoteCardDTOResultMap">
-        SELECT a.id                            AS id,
-               note_cover,
-               note_title,
-               SUBSTR(note_content, 1, 500) AS note_content,
-               is_featured,
-               status,
-               a.create_time                   AS create_time,
-               a.update_time                   AS update_time,
-               u.nickname                      AS author_nickname,
-               u.website                       AS author_website,
-               u.avatar                        AS author_avatar,
-               c.collection_name                 AS collection_name,
-               tag_name
+               a.create_time                AS create_time,
+               a.update_time                AS update_time,
+               u.nickname                   AS author_nickname,
+               u.website                    AS author_website,
+               u.avatar                     AS author_avatar,
+               c.collection_name            AS collection_name,
+               tag_name,
+               note_count,
+               note_time
         FROM (SELECT id,
                      user_id,
                      collection_id,
@@ -340,56 +286,153 @@
                      is_delete,
                      status,
                      create_time,
-                     update_time
+                     update_time,
+                     note_count,
+                     note_time
+              FROM t_note
+              WHERE id &gt; #{noteId}
+                and is_delete = 0
+                and status in (1, 2)
+              order by id limit 0,1) a
+                 LEFT JOIN t_note_tag at
+        ON a.id = at.note_id
+            LEFT JOIN t_tag t ON t.id = at.tag_id
+            LEFT JOIN t_collection c ON a.collection_id = c.id
+            LEFT JOIN t_user_info u ON a.user_id = u.id
+    </select>
+    <select id="getFirstNote" resultMap="NoteCardDTOResultMap">
+        SELECT a.id                         AS id,
+               note_cover,
+               note_title,
+               SUBSTR(note_content, 1, 500) AS note_content,
+               is_featured,
+               status,
+               a.create_time                AS create_time,
+               a.update_time                AS update_time,
+               u.nickname                   AS author_nickname,
+               u.website                    AS author_website,
+               u.avatar                     AS author_avatar,
+               c.collection_name            AS collection_name,
+               tag_name,
+               note_count,
+               note_time
+        FROM (SELECT id,
+                     user_id,
+                     collection_id,
+                     note_cover,
+                     note_title,
+                     note_content,
+                     is_featured,
+                     is_delete,
+                     status,
+                     create_time,
+                     update_time,
+                     note_count,
+                     note_time
               FROM t_note
               WHERE is_delete = 0
                 and status in (1, 2)
-              order by id desc
-              limit 0,1) a
+              order by id limit 0,1) a
                  LEFT JOIN t_note_tag at
-                           ON a.id = at.note_id
-                 LEFT JOIN t_tag t ON t.id = at.tag_id
-                 LEFT JOIN t_collection c ON a.collection_id = c.id
-                 LEFT JOIN t_user_info u ON a.user_id = u.id
+        ON a.id = at.note_id
+            LEFT JOIN t_tag t ON t.id = at.tag_id
+            LEFT JOIN t_collection c ON a.collection_id = c.id
+            LEFT JOIN t_user_info u ON a.user_id = u.id
     </select>
-<!--    <select id="listArticlesByTagId" resultMap="ArticleCardDTOResultMap">-->
-<!--        SELECT a.id                            AS id,-->
-<!--               category_id,-->
-<!--               article_cover,-->
-<!--               article_title,-->
-<!--               SUBSTR(article_content, 1, 500) AS article_content,-->
-<!--               is_top,-->
-<!--               is_featured,-->
-<!--               status,-->
-<!--               a.create_time                   AS create_time,-->
-<!--               a.update_time                   AS update_time,-->
-<!--               u.nickname                      AS author_nickname,-->
-<!--               u.website                       AS author_website,-->
-<!--               u.avatar                        AS author_avatar,-->
-<!--               c.category_name                 AS category_name,-->
-<!--               tag_name-->
-<!--        FROM t_article a-->
-<!--                 LEFT JOIN t_article_tag at-->
-<!--                           ON a.id = at.article_id-->
-<!--                 LEFT JOIN t_tag t ON t.id = at.tag_id-->
-<!--                 LEFT JOIN t_category c ON a.category_id = c.id-->
-<!--                 LEFT JOIN t_user_info u ON a.user_id = u.id-->
-<!--        WHERE at.tag_id = #{tagId}-->
-<!--          and a.is_delete = 0-->
-<!--          and status in (1, 2)-->
-<!--        LIMIT #{current} , #{size}-->
-<!--    </select>-->
-<!--    <select id="listArchives" resultType="com.aurora.model.dto.ArticleCardDTO">-->
-<!--        SELECT id,-->
-<!--               article_title,-->
-<!--               SUBSTR(article_content, 1, 500) AS article_content,-->
-<!--               create_time-->
-<!--        FROM t_article-->
-<!--        WHERE is_delete = 0-->
-<!--          and status = 1-->
-<!--        ORDER BY create_time DESC-->
-<!--        LIMIT #{current}, #{size}-->
-<!--    </select>-->
+    <select id="getLastNote" resultMap="NoteCardDTOResultMap">
+        SELECT a.id                         AS id,
+               note_cover,
+               note_title,
+               SUBSTR(note_content, 1, 500) AS note_content,
+               is_featured,
+               status,
+               a.create_time                AS create_time,
+               a.update_time                AS update_time,
+               u.nickname                   AS author_nickname,
+               u.website                    AS author_website,
+               u.avatar                     AS author_avatar,
+               c.collection_name            AS collection_name,
+               tag_name,
+               note_count,
+               note_time
+        FROM (SELECT id,
+                     user_id,
+                     collection_id,
+                     note_cover,
+                     note_title,
+                     note_content,
+                     is_featured,
+                     is_delete,
+                     status,
+                     create_time,
+                     update_time,
+                     note_count,
+                     note_time
+              FROM t_note
+              WHERE is_delete = 0
+                and status in (1, 2)
+              order by id desc limit 0,1) a
+                 LEFT JOIN t_note_tag at
+        ON a.id = at.note_id
+            LEFT JOIN t_tag t ON t.id = at.tag_id
+            LEFT JOIN t_collection c ON a.collection_id = c.id
+            LEFT JOIN t_user_info u ON a.user_id = u.id
+    </select>
+        <select id="listNotesByTagId" resultMap="NoteCardDTOResultMap">
+            SELECT a.id                         AS id,
+                   note_cover,
+                   note_title,
+                   SUBSTR(note_content, 1, 500) AS note_content,
+                   is_featured,
+                   STATUS,
+                   a.create_time                AS create_time,
+                   a.update_time                AS update_time,
+                   u.nickname                   AS author_nickname,
+                   u.website                    AS author_website,
+                   u.avatar                     AS author_avatar,
+                   c.collection_name            AS collection_name,
+                   c.id                         AS collection_id,
+                   tag_name,
+                   nt.tag_id                    AS tag_id,
+                   note_count,
+                   note_time
+            FROM (SELECT id,
+                         user_id,
+                         collection_id,
+                         note_cover,
+                         note_title,
+                         note_content,
+                         is_featured,
+                         is_delete,
+                         STATUS,
+                         create_time,
+                         update_time,
+                         note_count,
+                         note_time
+                  FROM t_note
+                  WHERE is_delete = 0
+                    AND STATUS IN (1, 2)
+                  ORDER BY id DESC) a
+                     LEFT JOIN t_note_tag nt ON a.id = nt.note_id
+                     LEFT JOIN t_tag t ON t.id = nt.tag_id
+                     LEFT JOIN t_collection c ON a.collection_id = c.id
+                     LEFT JOIN t_user_info u ON a.user_id = u.id
+            WHERE a.id IN (SELECT a.id AS id
+                           FROM (SELECT id FROM t_note WHERE is_delete = 0 AND STATUS IN (1, 2) ORDER BY id DESC) a
+                                    LEFT JOIN t_note_tag nt ON a.id = nt.note_id
+                           WHERE nt.tag_id = #{tagId})
+        </select>
+        <select id="listArchives" resultType="com.aurora.model.dto.ArticleCardDTO">
+            SELECT id,
+                   article_title,
+                   SUBSTR(article_content, 1, 500) AS article_content,
+                   create_time
+            FROM t_article
+            WHERE is_delete = 0
+              and status = 1
+            ORDER BY create_time DESC
+            LIMIT #{current}, #{size}
+        </select>
     <select id="countNoteAdmins" resultType="java.lang.Integer">
         SELECT
         count(DISTINCT a.id)
@@ -480,11 +523,11 @@
         is_featured DESC,
         a.id DESC
     </select>
-<!--    <select id="listArticleStatistics" resultType="com.aurora.model.dto.ArticleStatisticsDTO">-->
-<!--        SELECT DATE_FORMAT(create_time, "%Y-%m-%d") AS date,-->
-<!--               COUNT(1)                             AS count-->
-<!--        FROM t_article-->
-<!--        GROUP BY date-->
-<!--        ORDER BY date DESC-->
-<!--    </select>-->
+    <!--    <select id="listArticleStatistics" resultType="com.aurora.model.dto.ArticleStatisticsDTO">-->
+    <!--        SELECT DATE_FORMAT(create_time, "%Y-%m-%d") AS date,-->
+    <!--               COUNT(1)                             AS count-->
+    <!--        FROM t_article-->
+    <!--        GROUP BY date-->
+    <!--        ORDER BY date DESC-->
+    <!--    </select>-->
 </mapper>

@@ -126,7 +126,6 @@ function getConfigDate() {
             routes[8].children.shift();
         }
     });
-    console.log(routes);
     return routes;
 }
 export default {

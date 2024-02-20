@@ -38,12 +38,11 @@ public class CollectionServiceImpl extends ServiceImpl<CollectionMapper, Collect
      */
     @Autowired
     private CollectionMapper collectionMapper;
-//
-//    @Override
-//    public List<CategoryDTO> listCategories() {
-//        return categoryMapper.listCategories();
-//    }
-//
+
+    @Override
+    public List<CollectionDTO> listCollections() {
+        return collectionMapper.listCollections();
+    }
 //    @SneakyThrows
 //    @Override
 //    public PageResultDTO<CategoryAdminDTO> listCategoriesAdmin(ConditionVO conditionVO) {

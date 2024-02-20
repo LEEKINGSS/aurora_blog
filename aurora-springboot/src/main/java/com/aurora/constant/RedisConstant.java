@@ -32,6 +32,9 @@ public interface RedisConstant {
 
     String ARTICLE_ACCESS = "article_access:";
 
+    // 加密笔记
+    String NOTE_ACCESS = "note_access:";
+
     // 百度token
     String BAIDU_TOKEN = "baidu_token";
 

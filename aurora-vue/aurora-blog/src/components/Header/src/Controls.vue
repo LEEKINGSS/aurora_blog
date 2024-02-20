@@ -110,6 +110,16 @@
       </el-form-item>
     </el-form>
   </el-dialog>
+  <el-dialog v-model="notePasswordDialogVisible" width="30%" :fullscreen="isMobile">
+    <el-form @submit.native.prevent @keyup.enter.native="accessNote">
+      <el-form-item model="userInfo" class="mt-5">
+        <el-input id="note-password-input" v-model="notePassword" placeholder="笔记受密码保护,请输入密码" />
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="accessNote" size="large" class="mx-auto mt-3">校验密码</el-button>
+      </el-form-item>
+    </el-form>
+  </el-dialog>
   <teleport to="body">
     <SearchModel />
   </teleport>
@@ -160,7 +170,10 @@ export default defineComponent({
       forgetPasswordDialogVisible: false,
       articlePasswordDialogVisible: false,
       articlePassword: '',
-      articleId: ''
+      articleId: '',
+      notePasswordDialogVisible: false,
+      notePassword: '',
+      noteId: ''
     })
     emitter.on('changeArticlePasswordDialogVisible', (articleId: any) => {
       reactiveDate.articlePasswordDialogVisible = true
@@ -168,6 +181,14 @@ export default defineComponent({
       reactiveDate.articleId = articleId
       nextTick(() => {
         document.getElementById('article-password-input')?.focus()
+      })
+    })
+    emitter.on('changeNotePasswordDialogVisible', (noteId: any) => {
+      reactiveDate.notePasswordDialogVisible = true
+      reactiveDate.notePassword = ''
+      reactiveDate.noteId = noteId
+      nextTick(() => {
+        document.getElementById('note-password-input')?.focus()
       })
     })
     const handleClick = (name: string): void => {
@@ -213,6 +234,7 @@ export default defineComponent({
           userStore.userInfo = ''
           userStore.token = ''
           userStore.accessArticles = []
+          userStore.accessNotes = []
           sessionStorage.removeItem('token')
           proxy.$notify({
             title: 'Success',
@@ -360,6 +382,34 @@ export default defineComponent({
           }
         })
     }
+    const accessNote = () => {
+      if (reactiveDate.notePassword.trim().length == 0) {
+        proxy.$notify({
+          title: 'Warning',
+          message: '密码不能为空',
+          type: 'warning'
+        })
+        return
+      }
+      api
+        .accessNote({
+          noteId: reactiveDate.noteId,
+          notePassword: reactiveDate.notePassword
+        })
+        .then(({ data }) => {
+          if (data.flag) {
+            reactiveDate.notePasswordDialogVisible = false
+            userStore.accessNotes.push(reactiveDate.noteId)
+            router.push({ path: '/notes/' + reactiveDate.noteId })
+          } else {
+            proxy.$notify({
+              title: 'Error',
+              message: data.message,
+              type: 'error'
+            })
+          }
+        })
+    }
     return {
       handleOpenModel,
       loginInfo,
@@ -379,6 +429,7 @@ export default defineComponent({
       updatePassword,
       openForgetPasswordDialog,
       accessArticle,
+      accessNote,
       multiLanguage: computed(() => {
         let websiteConfig: any = appStore.websiteConfig
         return websiteConfig.multiLanguage

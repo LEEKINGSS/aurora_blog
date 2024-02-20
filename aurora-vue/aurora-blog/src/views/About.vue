@@ -53,6 +53,7 @@ import { useI18n } from 'vue-i18n'
 import { Sidebar, Profile, Navigator } from '@/components/Sidebar'
 import { useCommonStore } from '@/stores/common'
 import { useCommentStore } from '@/stores/comment'
+import { useAppStore } from '@/stores/app'
 import Sticky from '@/components/Sticky.vue'
 import { SubTitle } from '@/components/Title'
 import { Comment } from '@/components/Comment'
@@ -72,6 +73,7 @@ export default defineComponent({
     const commentStore = useCommentStore()
     const { t } = useI18n()
     const postRef = ref()
+    const appStore = useAppStore()
     const reactiveData = reactive({
       about: '' as any,
       comments: [] as any,
@@ -87,6 +89,7 @@ export default defineComponent({
     onMounted(() => {
       fetchComments()
       fetchAbout()
+      appStore.loadStyle()
     })
     onUnmounted(() => {
       commonStore.resetHeaderImage()

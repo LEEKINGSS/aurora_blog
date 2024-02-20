@@ -10,9 +10,11 @@
 import { useAppStore } from '@/stores/app'
 import { computed, defineComponent, toRefs } from 'vue'
 import { useI18n } from 'vue-i18n'
+import SvgIcon from '@/components/SvgIcon/index.vue'
 
 export default defineComponent({
   name: 'Title',
+  components: { SvgIcon },
   props: {
     title: {
       type: String,

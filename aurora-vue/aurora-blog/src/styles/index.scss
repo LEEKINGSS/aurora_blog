@@ -27,6 +27,20 @@
   @apply w-12 h-12 text-xl flex items-center justify-center text-ob-bright hover:opacity-50 transition cursor-pointer;
 }
 
+:root {
+  --font-color: #000;
+  --night-font-color: #ddd;
+  --primary: #b2fefa;
+  --secondary: #0ed2f7;
+  --dark: #0052d4;
+  --gradient-light: #5d9eea;
+  --gradient-middle: #0f27b5;
+  --gradient-dark: #1a1a1a;
+  --code-gradient-light: #cff0ff;
+  --code-gradient-dark: #afcafd;
+  --maxwidth: 1284px;
+}
+
 html {
   scrollbar-color: rgba(82, 82, 82, 0.8) transparent;
 }

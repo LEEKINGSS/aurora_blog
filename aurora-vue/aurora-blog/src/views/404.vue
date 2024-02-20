@@ -76,8 +76,24 @@
   </div>
 </template>
 
+<script lang="ts">
+import { defineComponent, onMounted } from 'vue'
+import { useAppStore } from '@/stores/app'
+
+export default defineComponent({
+  name: '404',
+  setup() {
+    const appStore = useAppStore()
+    onMounted(() => {
+      appStore.loadStyle()
+    })
+  }
+})
+</script>
+
 <style lang="css" scoped>
 @import url('https://fonts.googleapis.com/css?family=Fira+Sans');
+
 .left-section .inner-content {
   position: absolute;
   top: 50%;
@@ -99,6 +115,7 @@
   background: linear-gradient(var(--background-primary), var(--background-secondary));
   border-radius: 18px;
 }
+
 .background .ground {
   @apply shadow-xl;
   position: absolute;
@@ -109,6 +126,7 @@
   border-bottom-left-radius: 18px;
   border-bottom-right-radius: 18px;
 }
+
 @media (max-width: 770px) {
   .background .ground {
     height: 0vh;
@@ -126,6 +144,7 @@
   justify-content: space-around;
   border-radius: 18px;
 }
+
 @media (max-width: 770px) {
   .container {
     flex-direction: column;
@@ -141,6 +160,7 @@
 .left-section {
   width: 40%;
 }
+
 @media (max-width: 770px) {
   .left-section {
     width: 100%;
@@ -149,6 +169,7 @@
     top: 0;
   }
 }
+
 @media (max-width: 770px) {
   .left-section .inner-content {
     position: relative;
@@ -164,6 +185,7 @@
   padding: 0;
   text-shadow: 0 0 1rem #fefefe;
 }
+
 @media (max-width: 770px) {
   .heading {
     font-size: 7em;
@@ -180,6 +202,7 @@
   padding: 0 1rem;
   margin: 0 auto;
 }
+
 @media (max-width: 770px) {
   .subheading {
     font-size: 1.3em;
@@ -191,6 +214,7 @@
 .right-section {
   width: 50%;
 }
+
 @media (max-width: 770px) {
   .right-section {
     width: 100%;
@@ -208,32 +232,40 @@
   max-width: 100%;
   max-height: 100%;
 }
+
 @media (max-width: 770px) {
   .svgimg {
     padding: 0;
   }
 }
+
 .svgimg .bench-legs {
   fill: #0c0e10;
 }
+
 .svgimg .top-bench,
 .svgimg .bottom-bench {
   stroke: #0c0e10;
   stroke-width: 1px;
   fill: #5b3e2b;
 }
+
 .svgimg .bottom-bench path:nth-child(1) {
   fill: #432d20;
 }
+
 .svgimg .lamp-details {
   fill: #202425;
 }
+
 .svgimg .lamp-accent {
   fill: #2c3133;
 }
+
 .svgimg .lamp-bottom {
   fill: linear-gradient(#202425, #0c0e10);
 }
+
 .svgimg .lamp-light {
   fill: #efefef;
 }

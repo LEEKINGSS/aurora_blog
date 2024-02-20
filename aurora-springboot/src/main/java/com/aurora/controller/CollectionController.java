@@ -30,11 +30,11 @@ public class CollectionController {
     @Autowired
     private CollectionService collectionService;
 
-//    @ApiOperation("获取所有分类")
-//    @GetMapping("/categories/all")
-//    public ResultVO<List<CategoryDTO>> listCategories() {
-//        return ResultVO.ok(categoryService.listCategories());
-//    }
+    @ApiOperation(value = "获取所有合集")
+    @GetMapping("/collections/all")
+    public ResultVO<List<CollectionDTO>> listCollections() {
+        return ResultVO.ok(collectionService.listCollections());
+    }
 
     @ApiOperation(value = "查看后台合集列表")
     @GetMapping("/admin/collections")

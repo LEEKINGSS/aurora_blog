@@ -82,10 +82,14 @@ import { useI18n } from 'vue-i18n'
 import Paginator from '@/components/Paginator.vue'
 import api from '@/api/api'
 import markdownToHtml from '@/utils/markdown'
+import ObSkeleton from '@/components/LoadingSkeleton/src/Skeleton.vue'
+import SvgIcon from '@/components/SvgIcon/index.vue'
 
 export default defineComponent({
   name: 'Home',
   components: {
+    SvgIcon,
+    ObSkeleton,
     Feature,
     FeatureList,
     ArticleCard,
@@ -128,6 +132,7 @@ export default defineComponent({
       fetchTopAndFeatured()
       fetchCategories()
       fetchArticles()
+      appStore.loadStyle()
       const articleListEl = document.getElementById('article-list')
       articleOffset.value = articleListEl && articleListEl instanceof HTMLElement ? articleListEl.offsetTop + 120 : 0
     })
@@ -269,9 +274,11 @@ export default defineComponent({
       -webkit-line-clamp: 5;
       -webkit-box-orient: vertical;
     }
+
     .article-footer {
       margin-top: 13px;
     }
   }
 }
+
 </style>

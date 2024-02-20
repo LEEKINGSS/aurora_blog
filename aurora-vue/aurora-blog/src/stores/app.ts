@@ -54,6 +54,34 @@ export const useAppStore = defineStore('appStore', {
     }
   },
   actions: {
+    loadStyle() {
+      let element = document.querySelector('#app .app-wrapper .app-container') as HTMLElement
+      if (element) {
+        let marginValue = window.getComputedStyle(element).getPropertyValue('margin')
+        if(marginValue == '0px'){
+          // 修改全局margin值
+          element.style.margin = '0 auto'
+          let maxScreen  = document.querySelector(' .lg\\:max-w-screen-2xl') as HTMLElement
+          if (maxScreen) {
+            // 修改屏幕最大宽度
+            maxScreen.style.maxWidth = '1536px'
+          }
+          let padding = document.querySelector(' .lg\\:px-8') as HTMLElement
+          if (padding) {
+            // 修改padding值
+            padding.style.paddingLeft = '2rem'
+            padding.style.paddingRight = '2rem'
+          }
+          let position = document.querySelector('.header-container') as HTMLElement
+          if (position) {
+            // 修改页面布局
+            position.style.position = 'relative'
+            position.style.width = '100%'
+            position.style.left = '0'
+          }
+        }
+      }
+    },
     changeLocale(locale: string) {
       cookies.set('locale', locale, { expires: 7 })
       i18n.global.locale = locale

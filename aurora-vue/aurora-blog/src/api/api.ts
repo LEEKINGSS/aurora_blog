@@ -37,14 +37,26 @@ export default {
   getArticles: (params: any) => {
     return axios.get('/api/articles/all', { params: params })
   },
+  getNotes: (params: any) => {
+    return axios.get('/api/notes/all', { params: params })
+  },
   getArticlesByCategoryId: (params: any) => {
     return axios.get('/api/articles/categoryId', { params: params })
   },
-  getArticeById: (articleId: any) => {
+  getNotesByCollectionId: (params: any) => {
+    return axios.get('/api/notes/collectionId', { params: params })
+  },
+  getArticleById: (articleId: any) => {
     return axios.get('/api/articles/' + articleId)
+  },
+  getNoteById: (noteId: any) => {
+    return axios.get('/api/notes/' + noteId)
   },
   getAllCategories: () => {
     return axios.get('/api/categories/all')
+  },
+  getAllCollections: () => {
+    return axios.get('/api/collections/all')
   },
   getAllTags: () => {
     return axios.get('/api/tags/all')
@@ -54,6 +66,9 @@ export default {
   },
   getArticlesByTagId: (params: any) => {
     return axios.get('/api/articles/tagId', { params: params })
+  },
+  getNotesByTagId: (params: any) => {
+    return axios.get('/api/notes/tagId', { params: params })
   },
   getAllArchives: (params: any) => {
     return axios.get('/api/archives/all', { params: params })
@@ -139,5 +154,8 @@ export default {
   },
   accessArticle: (params: any) => {
     return axios.post('/api/articles/access', params)
+  },
+  accessNote: (params: any) => {
+    return axios.post('/api/notes/access', params)
   }
 }

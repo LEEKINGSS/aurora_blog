@@ -89,4 +89,14 @@ public class Note {
     @TableField(fill = FieldFill.UPDATE)
     private LocalDateTime updateTime;
 
+    /**
+     * 笔记字数统计
+     */
+    private Integer noteCount;
+
+    /**
+     * 笔记阅读所需时间
+     */
+    private String noteTime;
+
 }

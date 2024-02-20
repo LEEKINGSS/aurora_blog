@@ -17,8 +17,7 @@ public interface NoteMapper extends BaseMapper<Note> {
 //    List<ArticleCardDTO> listTopAndFeaturedArticles();
 //
     List<NoteCardDTO> listNotes(@Param("current") Long current, @Param("size") Long size);
-//
-//    List<ArticleCardDTO> getArticlesByCategoryId(@Param("current") Long current, @Param("size") Long size, @Param("categoryId") Integer categoryId);
+    List<NoteCardDTO> getNotesByCollectionId(@Param("current") Long current, @Param("size") Long size, @Param("collectionId") Integer collectionId);
 
     NoteDTO getNoteById(@Param("noteId") Integer noteId);
 
@@ -29,8 +28,7 @@ public interface NoteMapper extends BaseMapper<Note> {
     NoteCardDTO getFirstNote();
 
     NoteCardDTO getLastNote();
-//
-//    List<ArticleCardDTO> listArticlesByTagId(@Param("current") Long current, @Param("size") Long size, @Param("tagId") Integer tagId);
+    List<NoteCardDTO> listNotesByTagId(@Param("tagId") Integer tagId);
 //
 //    List<ArticleCardDTO> listArchives(@Param("current") Long current, @Param("size") Long size);
 //

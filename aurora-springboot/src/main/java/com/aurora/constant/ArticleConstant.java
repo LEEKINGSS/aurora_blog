@@ -13,4 +13,9 @@ public interface ArticleConstant {
     public static final Integer ARTICLE_STATUS_PRIVATE = 2;
 
     public static final Integer ARTICLE_STATUS_DRAFT = 3;
+
+    /**
+     * 每分钟阅读文字个数
+     */
+    public static final Integer WORDS_PER_MINUTE = 200;
 }

@@ -60,6 +60,7 @@ import { useCommentStore } from '@/stores/comment'
 import { v3ImgPreviewFn } from 'v3-img-preview'
 import emitter from '@/utils/mitt'
 import api from '@/api/api'
+import { useAppStore } from '@/stores/app'
 
 export default defineComponent({
   name: 'talks',
@@ -69,6 +70,7 @@ export default defineComponent({
     const commentStore = useCommentStore()
     const route = useRoute()
     const router = useRouter()
+    const appStore = useAppStore()
     const reactiveData = reactive({
       talk: '' as any,
       comments: [] as any,
@@ -85,6 +87,7 @@ export default defineComponent({
       toPageTop()
       fetchTalk()
       fetchComments()
+      appStore.loadStyle()
     })
     provide(
       'comments',

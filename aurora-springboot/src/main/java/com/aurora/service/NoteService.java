@@ -17,13 +17,22 @@ public interface NoteService extends IService<Note> {
      */
     PageResultDTO<NoteCardDTO> listNotes();
 
-    PageResultDTO<ArticleCardDTO> listArticlesByCategoryId(Integer categoryId);
+    /**
+     * 根据合集id获取笔记
+     */
+    PageResultDTO<NoteCardDTO> listNotesByCollectionId(Integer collectionId);
 
+    /**
+     * 根据id获取笔记
+     */
     NoteDTO getNoteById(Integer noteId);
 
-    void accessArticle(ArticlePasswordVO articlePasswordVO);
+    void accessNote(NotePasswordVO notePasswordVO);
 
-    PageResultDTO<ArticleCardDTO> listArticlesByTagId(Integer tagId);
+    /**
+     * 根据标签id获取文章
+     */
+    PageResultDTO<NoteCardDTO> listNotesByTagId(Integer tagId);
 
     PageResultDTO<ArchiveDTO> listArchives();
 

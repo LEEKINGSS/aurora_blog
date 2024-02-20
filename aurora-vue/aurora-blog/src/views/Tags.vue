@@ -22,6 +22,7 @@ import { useTagStore } from '@/stores/tag'
 import { TagList, TagItem } from '@/components/Tag'
 import { useCommonStore } from '@/stores/common'
 import api from '@/api/api'
+import { useAppStore } from '@/stores/app'
 
 export default defineComponent({
   name: 'Tag',
@@ -30,8 +31,10 @@ export default defineComponent({
     const commonStore = useCommonStore()
     const { t } = useI18n()
     const tagStore = useTagStore()
+    const appStore = useAppStore()
     onMounted(() => {
       fetchTags()
+      appStore.loadStyle()
     })
     onUnmounted(() => {
       commonStore.resetHeaderImage()

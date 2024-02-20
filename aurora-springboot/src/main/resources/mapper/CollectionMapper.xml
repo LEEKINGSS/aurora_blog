@@ -3,15 +3,15 @@
 <mapper namespace="com.aurora.mapper.CollectionMapper">
     <select id="listCollections" resultType="com.aurora.model.dto.CollectionDTO">
         SELECT c.id,
-               c.category_name,
-               COUNT(a.id) AS article_count
-        FROM t_category c
+               c.collection_name,
+               COUNT(a.id) AS note_count
+        FROM t_collection c
                  LEFT JOIN (
             SELECT *
-            FROM t_article
+            FROM t_note
             WHERE is_delete = 0
               and status in (1, 2)
-        ) a ON c.id = a.category_id
+        ) a ON c.id = a.collection_id
         GROUP BY c.id
     </select>
     <select id="listCollectionsAdmin" resultType="com.aurora.model.dto.CollectionAdminDTO">

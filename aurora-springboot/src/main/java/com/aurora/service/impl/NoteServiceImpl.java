@@ -34,6 +34,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import static com.aurora.constant.ArticleConstant.ARTICLE_STATUS_PRIVATE;
+import static com.aurora.constant.ArticleConstant.WORDS_PER_MINUTE;
 import static com.aurora.constant.RabbitMQConstant.SUBSCRIBE_EXCHANGE;
 import static com.aurora.constant.RedisConstant.*;
 import static com.aurora.enums.ArticleStatusEnum.DRAFT;
@@ -118,17 +119,16 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
                 .eq(Note::getStatus, 1);
         CompletableFuture<Integer> asyncCount = CompletableFuture.supplyAsync(() -> noteMapper.selectCount(queryWrapper));
         List<NoteCardDTO> notes = noteMapper.listNotes(PageUtil.getLimitCurrent(), PageUtil.getSize());
-//        List<ArticleCardDTO> articles = articleMapper.listArticles(PageUtil.getLimitCurrent(), PageUtil.getSize());
         return new PageResultDTO<>(notes, asyncCount.get());
     }
 
     @SneakyThrows
     @Override
-    public PageResultDTO<ArticleCardDTO> listArticlesByCategoryId(Integer categoryId) {
-        LambdaQueryWrapper<Article> queryWrapper = new LambdaQueryWrapper<Article>().eq(Article::getCategoryId, categoryId);
-        CompletableFuture<Integer> asyncCount = CompletableFuture.supplyAsync(() -> articleMapper.selectCount(queryWrapper));
-        List<ArticleCardDTO> articles = articleMapper.getArticlesByCategoryId(PageUtil.getLimitCurrent(), PageUtil.getSize(), categoryId);
-        return new PageResultDTO<>(articles, asyncCount.get());
+    public PageResultDTO<NoteCardDTO> listNotesByCollectionId(Integer collectionId) {
+        LambdaQueryWrapper<Note> queryWrapper = new LambdaQueryWrapper<Note>().eq(Note::getCollectionId, collectionId);
+        CompletableFuture<Integer> asyncCount = CompletableFuture.supplyAsync(() -> noteMapper.selectCount(queryWrapper));
+        List<NoteCardDTO> notes = noteMapper.getNotesByCollectionId(PageUtil.getLimitCurrent(), PageUtil.getSize(), collectionId);
+        return new PageResultDTO<>(notes, asyncCount.get());
     }
 
     /**
@@ -182,13 +182,13 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
     }
 
     @Override
-    public void accessArticle(ArticlePasswordVO articlePasswordVO) {
-        Article article = articleMapper.selectOne(new LambdaQueryWrapper<Article>().eq(Article::getId, articlePasswordVO.getArticleId()));
-        if (Objects.isNull(article)) {
-            throw new BizException("文章不存在");
+    public void accessNote(NotePasswordVO notePasswordVO) {
+        Note note = noteMapper.selectOne(new LambdaQueryWrapper<Note>().eq(Note::getId, notePasswordVO.getNoteId()));
+        if (Objects.isNull(note)) {
+            throw new BizException("笔记不存在");
         }
-        if (article.getPassword().equals(articlePasswordVO.getArticlePassword())) {
-            redisService.sAdd(ARTICLE_ACCESS + UserUtil.getUserDetailsDTO().getId(), articlePasswordVO.getArticleId());
+        if (note.getPassword().equals(notePasswordVO.getNotePassword())) {
+            redisService.sAdd(NOTE_ACCESS + UserUtil.getUserDetailsDTO().getId(), notePasswordVO.getNoteId());
         } else {
             throw new BizException("密码错误");
         }
@@ -196,11 +196,11 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 
     @SneakyThrows
     @Override
-    public PageResultDTO<ArticleCardDTO> listArticlesByTagId(Integer tagId) {
-        LambdaQueryWrapper<ArticleTag> queryWrapper = new LambdaQueryWrapper<ArticleTag>().eq(ArticleTag::getTagId, tagId);
-        CompletableFuture<Integer> asyncCount = CompletableFuture.supplyAsync(() -> articleTagMapper.selectCount(queryWrapper));
-        List<ArticleCardDTO> articles = articleMapper.listArticlesByTagId(PageUtil.getLimitCurrent(), PageUtil.getSize(), tagId);
-        return new PageResultDTO<>(articles, asyncCount.get());
+    public PageResultDTO<NoteCardDTO> listNotesByTagId(Integer tagId) {
+        LambdaQueryWrapper<NoteTag> queryWrapper = new LambdaQueryWrapper<NoteTag>().eq(NoteTag::getTagId, tagId);
+        CompletableFuture<Integer> asyncCount = CompletableFuture.supplyAsync(() -> noteTagMapper.selectCount(queryWrapper));
+        List<NoteCardDTO> notes = noteMapper.listNotesByTagId(tagId);
+        return new PageResultDTO<>(notes, asyncCount.get());
     }
 
     @SneakyThrows
@@ -269,11 +269,37 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
             note.setCollectionId(collection.getId());
         }
         note.setUserId(UserUtil.getUserDetailsDTO().getUserInfoId());
+        String noteContent = note.getNoteContent();
+        noteContent = noteContent.replaceAll("[*_:`~#\\[\\]<>]", "");
+        int count = 0;
+        for (int i = 0; i < noteContent.length(); i++) {
+            if (isChineseCharacter(noteContent.charAt(i))) {
+                count++;
+            }
+        }
+        note.setNoteTime(getReadTime(count));
+        note.setNoteCount(count);
         this.saveOrUpdate(note);
         saveNoteTag(noteVO, note.getId());
         if (note.getStatus().equals(1)) {
             rabbitTemplate.convertAndSend(SUBSCRIBE_EXCHANGE, "*", new Message(JSON.toJSONBytes(note.getId()), new MessageProperties()));
         }
+    }
+
+    /**
+     * 判断字符是否为汉字
+     */
+    public boolean isChineseCharacter(char c) {
+        return c >= '\u4e00' && c <= '\u9fa5';
+    }
+
+    /**
+     * 判断阅读汉字需要的时间
+     */
+    public String getReadTime(int count) {
+        int minutes = count / WORDS_PER_MINUTE;
+        int seconds = (count - minutes * WORDS_PER_MINUTE) / (WORDS_PER_MINUTE / 60);
+        return String.format("%02d", minutes) + ":" + String.format("%02d", seconds);
     }
 
     /**
@@ -321,7 +347,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
      */
     private Collection saveNoteCollection(NoteVO noteVO) {
         Collection collection = collectionMapper.selectOne(new LambdaQueryWrapper<Collection>()
-                        .eq(Collection::getCollectionName, noteVO.getCollectionName()));
+                .eq(Collection::getCollectionName, noteVO.getCollectionName()));
         if (Objects.isNull(collection) && !noteVO.getStatus().equals(DRAFT.getStatus())) {
             collection = Collection.builder()
                     .collectionName(noteVO.getCollectionName())
@@ -344,7 +370,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
     }
 
     @Override
-    public void updateNoteDelete(DeleteVO deleteVO){
+    public void updateNoteDelete(DeleteVO deleteVO) {
         List<Note> notes = deleteVO.getIds().stream()
                 .map(id -> Note.builder()
                         .id(id)
@@ -368,7 +394,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
         Note note = noteMapper.selectById(noteId);
         Collection collection = collectionMapper.selectById(note.getCollectionId());
         String collectionName = null;
-        if(Objects.nonNull(collection)){
+        if (Objects.nonNull(collection)) {
             collectionName = collection.getCollectionName();
         }
         List<String> tagNames = tagMapper.listTagNamesByNoteId(noteId);
@@ -379,7 +405,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
     }
 
     @Override
-    public List<String> exportNotes(List<Integer> noteIds){
+    public List<String> exportNotes(List<Integer> noteIds) {
         List<Note> notes = noteMapper.selectList(new LambdaQueryWrapper<Note>()
                 .select(Note::getNoteTitle, Note::getNoteContent)
                 .in(Note::getId, noteIds));

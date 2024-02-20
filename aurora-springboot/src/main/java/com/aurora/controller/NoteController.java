@@ -51,30 +51,29 @@ public class NoteController {
         return ResultVO.ok(noteService.listNotes());
     }
 
-//    @ApiOperation("根据分类id获取文章")
-//    @GetMapping("/articles/categoryId")
-//    public ResultVO<PageResultDTO<ArticleCardDTO>> getArticlesByCategoryId(@RequestParam Integer categoryId) {
-//        return ResultVO.ok(articleService.listArticlesByCategoryId(categoryId));
-//    }
+    @ApiOperation("根据合集id获取文章")
+    @GetMapping("/notes/collectionId")
+    public ResultVO<PageResultDTO<NoteCardDTO>> listNotesByCollectionId(@RequestParam Integer collectionId) {
+        return ResultVO.ok(noteService.listNotesByCollectionId(collectionId));
+    }
 
     @ApiOperation("根据id获取笔记")
     @GetMapping("/notes/{noteId}")
     public ResultVO<NoteDTO> getNoteById(@PathVariable("noteId") Integer noteId) {
         return ResultVO.ok(noteService.getNoteById(noteId));
     }
-//
-//    @ApiOperation("校验文章访问密码")
-//    @PostMapping("/articles/access")
-//    public ResultVO<?> accessArticle(@Valid @RequestBody ArticlePasswordVO articlePasswordVO) {
-//        articleService.accessArticle(articlePasswordVO);
-//        return ResultVO.ok();
-//    }
-//
-//    @ApiOperation("根据标签id获取文章")
-//    @GetMapping("/articles/tagId")
-//    public ResultVO<PageResultDTO<ArticleCardDTO>> listArticlesByTagId(@RequestParam Integer tagId) {
-//        return ResultVO.ok(articleService.listArticlesByTagId(tagId));
-//    }
+
+    @ApiOperation("校验笔记访问密码")
+    @PostMapping("/notes/access")
+    public ResultVO<?> accessNote(@Valid @RequestBody NotePasswordVO notePasswordVO) {
+        noteService.accessNote(notePasswordVO);
+        return ResultVO.ok();
+    }
+    @ApiOperation("根据标签id获取笔记")
+    @GetMapping("/notes/tagId")
+    public ResultVO<PageResultDTO<NoteCardDTO>> listNotesByTagId(@RequestParam Integer tagId) {
+        return ResultVO.ok(noteService.listNotesByTagId(tagId));
+    }
 //
 //    @ApiOperation("获取所有文章归档")
 //    @GetMapping("/archives/all")

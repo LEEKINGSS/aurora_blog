@@ -9,7 +9,12 @@ const routes = [
   {
     path: '/note',
     name: 'Note',
-    component: () => import('../views/Node.vue')
+    component: () => import('../views/Note.vue')
+  },
+  {
+    path: '/notes/:noteId',
+    name: 'Notes',
+    component: () => import('../views/NoteDetail.vue')
   },
   {
     path: '/articles/:articleId',

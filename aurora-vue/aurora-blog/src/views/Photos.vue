@@ -49,6 +49,7 @@ import { Sidebar, Profile } from '../components/Sidebar'
 import Breadcrumb from '@/components/Breadcrumb.vue'
 import { v3ImgPreviewFn } from 'v3-img-preview'
 import api from '@/api/api'
+import { useAppStore } from '@/stores/app'
 
 export default defineComponent({
   name: 'Photos',
@@ -57,6 +58,7 @@ export default defineComponent({
     const { t } = useI18n()
     const route = useRoute()
     const commonStore = useCommonStore()
+    const appStore = useAppStore()
     const reactiveData = reactive({
       photoAlbumName: '' as any,
       noResult: false,
@@ -64,6 +66,9 @@ export default defineComponent({
       current: 1,
       size: 10,
       albumId: route.params.albumId
+    })
+    onMounted(() => {
+      appStore.loadStyle()
     })
     onBeforeRouteUpdate((to) => {
       reactiveData.photoAlbumName = ''
@@ -100,6 +105,10 @@ export default defineComponent({
     }
   }
 })
+
+function onMounted(arg0: () => void) {
+    throw new Error('Function not implemented.')
+}
 </script>
 <style lang="scss" scoped>
 .photo-wrap {

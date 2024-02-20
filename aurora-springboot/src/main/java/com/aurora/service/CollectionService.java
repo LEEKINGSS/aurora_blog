@@ -9,8 +9,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import java.util.List;
 
 public interface CollectionService extends IService<Collection> {
-//
-//    List<CategoryDTO> listCategories();
+    List<CollectionDTO> listCollections();
     PageResultDTO<CollectionAdminDTO> listCollectionsAdmin(ConditionVO conditionVO);
 
     List<CollectionDTO> listCollectionsBySearch(ConditionVO conditionVO);

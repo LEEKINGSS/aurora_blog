@@ -8,6 +8,7 @@ export const useUserStore = defineStore('userStore', {
       userInfo: '' as any,
       token: '' as any,
       accessArticles: [] as any,
+      accessNotes: [] as any,
       tab: 0 as any,
       page: 1 as any
     }

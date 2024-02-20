@@ -55,6 +55,7 @@ import Breadcrumb from '@/components/Breadcrumb.vue'
 import Paginator from '@/components/Paginator.vue'
 import api from '@/api/api'
 import markdownToHtml from '@/utils/markdown'
+import { useAppStore } from '@/stores/app'
 
 export default defineComponent({
   name: 'Archives',
@@ -63,6 +64,7 @@ export default defineComponent({
     const commonStore = useCommonStore()
     const articleStore = useArticleStore()
     const { t } = useI18n()
+    const appStore = useAppStore()
     const pagination = reactive({
       current: 1,
       total: 0,
@@ -71,6 +73,7 @@ export default defineComponent({
     onMounted(() => {
       toPageTop()
       fetchArchives()
+      appStore.loadStyle()
     })
     onUnmounted(() => {
       commonStore.resetHeaderImage()

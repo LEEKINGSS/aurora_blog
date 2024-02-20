@@ -40,7 +40,8 @@
     "vue-typed-js": "^0.1.2",
     "vue3-click-away": "^1.2.4",
     "vue3-infinite-scroll-better": "^2.2.0",
-    "vue3-lazy": "^1.0.0-alpha.1"
+    "vue3-lazy": "^1.0.0-alpha.1",
+    "vue3-typed-ts": "^1.0.3"
   },
   "devDependencies": {
     "@fullhuman/postcss-purgecss": "^3.0.0",

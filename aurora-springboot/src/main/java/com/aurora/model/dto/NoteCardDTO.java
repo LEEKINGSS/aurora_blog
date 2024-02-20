@@ -30,8 +30,14 @@ public class NoteCardDTO extends Note {
     private String collectionName;
 
     /**
+     * 合集id
+     */
+    private Integer collectionId;
+
+    /**
      * 笔记标签
      */
     private List<Tag> tags;
+
 
 }
