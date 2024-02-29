@@ -1,15 +1,15 @@
 package com.aurora.controller;
 
 import com.aurora.annotation.OptLog;
+import com.aurora.enums.FilePathEnum;
+import com.aurora.model.dto.PageResultDTO;
 import com.aurora.model.dto.PhotoAlbumAdminDTO;
 import com.aurora.model.dto.PhotoAlbumDTO;
-import com.aurora.enums.FilePathEnum;
+import com.aurora.model.vo.ConditionVO;
+import com.aurora.model.vo.PhotoAlbumVO;
 import com.aurora.model.vo.ResultVO;
 import com.aurora.service.PhotoAlbumService;
 import com.aurora.strategy.context.UploadStrategyContext;
-import com.aurora.model.vo.ConditionVO;
-import com.aurora.model.dto.PageResultDTO;
-import com.aurora.model.vo.PhotoAlbumVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
-
 import java.util.List;
 
 import static com.aurora.constant.OptTypeConstant.*;

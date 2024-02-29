@@ -4,11 +4,11 @@ import com.aurora.annotation.OptLog;
 import com.aurora.model.dto.CategoryAdminDTO;
 import com.aurora.model.dto.CategoryDTO;
 import com.aurora.model.dto.CategoryOptionDTO;
-import com.aurora.service.CategoryService;
+import com.aurora.model.dto.PageResultDTO;
 import com.aurora.model.vo.CategoryVO;
 import com.aurora.model.vo.ConditionVO;
-import com.aurora.model.dto.PageResultDTO;
 import com.aurora.model.vo.ResultVO;
+import com.aurora.service.CategoryService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
-import static com.aurora.constant.OptTypeConstant.*;
+import static com.aurora.constant.OptTypeConstant.DELETE;
+import static com.aurora.constant.OptTypeConstant.SAVE_OR_UPDATE;
 
 @Api(tags = "分类模块")
 @RestController

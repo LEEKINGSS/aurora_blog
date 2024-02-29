@@ -1,13 +1,13 @@
 package com.aurora.controller;
 
 import com.aurora.annotation.OptLog;
+import com.aurora.model.dto.PageResultDTO;
 import com.aurora.model.dto.RoleDTO;
 import com.aurora.model.dto.UserRoleDTO;
-import com.aurora.model.vo.ResultVO;
-import com.aurora.service.RoleService;
 import com.aurora.model.vo.ConditionVO;
-import com.aurora.model.dto.PageResultDTO;
+import com.aurora.model.vo.ResultVO;
 import com.aurora.model.vo.RoleVO;
+import com.aurora.service.RoleService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +16,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
-import static com.aurora.constant.OptTypeConstant.*;
+import static com.aurora.constant.OptTypeConstant.DELETE;
+import static com.aurora.constant.OptTypeConstant.SAVE_OR_UPDATE;
 
 @Api(tags = "角色模块")
 @RestController

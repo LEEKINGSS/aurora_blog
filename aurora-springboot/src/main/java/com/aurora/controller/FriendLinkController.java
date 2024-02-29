@@ -3,11 +3,11 @@ package com.aurora.controller;
 import com.aurora.annotation.OptLog;
 import com.aurora.model.dto.FriendLinkAdminDTO;
 import com.aurora.model.dto.FriendLinkDTO;
-import com.aurora.model.vo.ResultVO;
-import com.aurora.service.FriendLinkService;
+import com.aurora.model.dto.PageResultDTO;
 import com.aurora.model.vo.ConditionVO;
 import com.aurora.model.vo.FriendLinkVO;
-import com.aurora.model.dto.PageResultDTO;
+import com.aurora.model.vo.ResultVO;
+import com.aurora.service.FriendLinkService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +16,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
-import static com.aurora.constant.OptTypeConstant.*;
+import static com.aurora.constant.OptTypeConstant.DELETE;
+import static com.aurora.constant.OptTypeConstant.SAVE_OR_UPDATE;
 
 @Api(tags = "友链模块")
 @RestController
