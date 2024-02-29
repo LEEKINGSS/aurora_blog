@@ -1,18 +1,16 @@
 package com.aurora.service.impl;
 
-import com.aurora.entity.Article;
-import com.aurora.entity.Category;
 import com.aurora.entity.Collection;
 import com.aurora.entity.Note;
 import com.aurora.exception.BizException;
 import com.aurora.mapper.ArticleMapper;
-import com.aurora.mapper.CategoryMapper;
 import com.aurora.mapper.CollectionMapper;
 import com.aurora.mapper.NoteMapper;
-import com.aurora.model.dto.*;
+import com.aurora.model.dto.CollectionAdminDTO;
+import com.aurora.model.dto.CollectionDTO;
+import com.aurora.model.dto.PageResultDTO;
 import com.aurora.model.vo.CollectionVO;
 import com.aurora.model.vo.ConditionVO;
-import com.aurora.service.CategoryService;
 import com.aurora.service.CollectionService;
 import com.aurora.util.BeanCopyUtil;
 import com.aurora.util.PageUtil;

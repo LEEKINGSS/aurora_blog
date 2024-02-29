@@ -3,7 +3,10 @@ package com.aurora.model.dto;
 import com.aurora.entity.Note;
 import com.aurora.entity.Tag;
 import com.aurora.entity.UserInfo;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.util.List;

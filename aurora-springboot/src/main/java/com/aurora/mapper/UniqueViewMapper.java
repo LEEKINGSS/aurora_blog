@@ -1,7 +1,7 @@
 package com.aurora.mapper;
 
-import com.aurora.model.dto.UniqueViewDTO;
 import com.aurora.entity.UniqueView;
+import com.aurora.model.dto.UniqueViewDTO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;

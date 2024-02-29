@@ -1,7 +1,7 @@
 package com.aurora.mapper;
 
-import com.aurora.model.dto.JobDTO;
 import com.aurora.entity.Job;
+import com.aurora.model.dto.JobDTO;
 import com.aurora.model.vo.JobSearchVO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;

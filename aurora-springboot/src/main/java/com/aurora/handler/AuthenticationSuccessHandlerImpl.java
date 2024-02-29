@@ -2,14 +2,14 @@ package com.aurora.handler;
 
 import com.alibaba.fastjson.JSON;
 import com.aurora.constant.CommonConstant;
-import com.aurora.model.dto.UserDetailsDTO;
-import com.aurora.model.dto.UserInfoDTO;
 import com.aurora.entity.UserAuth;
 import com.aurora.mapper.UserAuthMapper;
+import com.aurora.model.dto.UserDetailsDTO;
+import com.aurora.model.dto.UserInfoDTO;
+import com.aurora.model.vo.ResultVO;
 import com.aurora.service.TokenService;
 import com.aurora.util.BeanCopyUtil;
 import com.aurora.util.UserUtil;
-import com.aurora.model.vo.ResultVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.Authentication;

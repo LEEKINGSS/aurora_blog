@@ -6,7 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import static com.aurora.enums.StatusCodeEnum.*;
+import static com.aurora.enums.StatusCodeEnum.FAIL;
+import static com.aurora.enums.StatusCodeEnum.SUCCESS;
 
 @Data
 @Builder

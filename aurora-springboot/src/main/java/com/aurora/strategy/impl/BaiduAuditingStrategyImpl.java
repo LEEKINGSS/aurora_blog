@@ -1,11 +1,11 @@
 package com.aurora.strategy.impl;
 
+import com.aurora.config.properties.BaiduConfigProperties;
 import com.aurora.model.dto.FindingsOfAuditDTO;
+import com.aurora.service.RedisService;
 import com.aurora.strategy.BaiduAuditingStrategy;
 import com.aurora.util.HttpUtil;
 import org.json.JSONObject;
-import com.aurora.config.properties.BaiduConfigProperties;
-import com.aurora.service.RedisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

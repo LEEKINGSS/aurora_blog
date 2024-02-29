@@ -4,7 +4,6 @@ package com.aurora.model.dto;
 import com.aurora.entity.Note;
 import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;

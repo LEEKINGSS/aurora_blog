@@ -6,7 +6,8 @@ import com.aurora.util.FileUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 
 @Service
 public abstract class AbstractUploadStrategyImpl implements UploadStrategy {

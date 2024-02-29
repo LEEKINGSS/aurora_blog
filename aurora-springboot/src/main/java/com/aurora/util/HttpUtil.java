@@ -16,8 +16,8 @@ import java.security.cert.X509Certificate;
 import java.util.List;
 import java.util.Map;
 
-import static com.aurora.constant.BaiduTranslateConstant.SOCKET_TIMEOUT;
 import static com.aurora.constant.BaiduTranslateConstant.GET;
+import static com.aurora.constant.BaiduTranslateConstant.SOCKET_TIMEOUT;
 
 /**
  * http 工具类

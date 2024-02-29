@@ -1,8 +1,10 @@
 package com.aurora.mapper;
 
-import com.aurora.entity.Article;
 import com.aurora.entity.Note;
-import com.aurora.model.dto.*;
+import com.aurora.model.dto.ArticleStatisticsDTO;
+import com.aurora.model.dto.NoteAdminDTO;
+import com.aurora.model.dto.NoteCardDTO;
+import com.aurora.model.dto.NoteDTO;
 import com.aurora.model.vo.ConditionVO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
