@@ -14,6 +14,7 @@
         <result property="noteCount" column="note_count"/>
         <result property="noteTime" column="note_time"/>
         <result property="collectionId" column="collection_id"/>
+        <result property="noteQuotes" column="note_quotes"/>
         <association property="author" javaType="com.aurora.entity.UserInfo">
             <result property="nickname" column="author_nickname"/>
             <result property="website" column="author_website"/>
@@ -103,7 +104,7 @@
         SELECT a.id                         AS id,
                note_cover,
                note_title,
-               SUBSTR(note_content, 1, 500) AS note_content,
+               SUBSTR(note_content, 1, 300) AS note_content,
                is_featured,
                status,
                a.create_time                AS create_time,
@@ -116,7 +117,8 @@
                tag_name,
                nt.tag_id                    AS tag_id,
                note_count,
-               note_time
+               note_time,
+               note_quotes
         FROM (SELECT id,
                      user_id,
                      collection_id,
@@ -129,12 +131,12 @@
                      create_time,
                      update_time,
                      note_count,
-                     note_time
+                     note_time,
+                     note_quotes
               FROM t_note
               where is_delete = 0
                 and status in (1, 2)
-              order by id desc
-                  LIMIT #{current}, #{size}) a
+              order by id desc) a
                  LEFT JOIN t_note_tag nt
                            ON a.id = nt.note_id
                  LEFT JOIN t_tag t ON t.id = nt.tag_id
@@ -145,7 +147,7 @@
         SELECT a.id                         AS id,
                note_cover,
                note_title,
-               SUBSTR(note_content, 1, 500) AS note_content,
+               SUBSTR(note_content, 1, 300) AS note_content,
                is_featured,
                status,
                a.create_time                AS create_time,
@@ -153,10 +155,11 @@
                u.nickname                   AS author_nickname,
                u.website                    AS author_website,
                u.avatar                     AS author_avatar,
-               c.collection_name              AS collection_name,
+               c.collection_name            AS collection_name,
                tag_name,
                note_count,
-               note_time
+               note_time,
+               note_quotes
         FROM (SELECT id,
                      user_id,
                      collection_id,
@@ -169,13 +172,13 @@
                      create_time,
                      update_time,
                      note_count,
-                     note_time
+                     note_time,
+                     note_quotes
               FROM t_note
               WHERE collection_id = #{collectionId}
                 and is_delete = 0
                 and status in (1, 2)
-              order by id desc
-                  LIMIT #{current}, #{size}) a
+              order by id desc) a
                  LEFT JOIN t_note_tag at
         ON a.id = at.note_id
             LEFT JOIN t_tag t ON t.id = at.tag_id
@@ -378,61 +381,63 @@
             LEFT JOIN t_collection c ON a.collection_id = c.id
             LEFT JOIN t_user_info u ON a.user_id = u.id
     </select>
-        <select id="listNotesByTagId" resultMap="NoteCardDTOResultMap">
-            SELECT a.id                         AS id,
-                   note_cover,
-                   note_title,
-                   SUBSTR(note_content, 1, 500) AS note_content,
-                   is_featured,
-                   STATUS,
-                   a.create_time                AS create_time,
-                   a.update_time                AS update_time,
-                   u.nickname                   AS author_nickname,
-                   u.website                    AS author_website,
-                   u.avatar                     AS author_avatar,
-                   c.collection_name            AS collection_name,
-                   c.id                         AS collection_id,
-                   tag_name,
-                   nt.tag_id                    AS tag_id,
-                   note_count,
-                   note_time
-            FROM (SELECT id,
-                         user_id,
-                         collection_id,
-                         note_cover,
-                         note_title,
-                         note_content,
-                         is_featured,
-                         is_delete,
-                         STATUS,
-                         create_time,
-                         update_time,
-                         note_count,
-                         note_time
-                  FROM t_note
-                  WHERE is_delete = 0
-                    AND STATUS IN (1, 2)
-                  ORDER BY id DESC) a
-                     LEFT JOIN t_note_tag nt ON a.id = nt.note_id
-                     LEFT JOIN t_tag t ON t.id = nt.tag_id
-                     LEFT JOIN t_collection c ON a.collection_id = c.id
-                     LEFT JOIN t_user_info u ON a.user_id = u.id
-            WHERE a.id IN (SELECT a.id AS id
-                           FROM (SELECT id FROM t_note WHERE is_delete = 0 AND STATUS IN (1, 2) ORDER BY id DESC) a
-                                    LEFT JOIN t_note_tag nt ON a.id = nt.note_id
-                           WHERE nt.tag_id = #{tagId})
-        </select>
-        <select id="listArchives" resultType="com.aurora.model.dto.ArticleCardDTO">
-            SELECT id,
-                   article_title,
-                   SUBSTR(article_content, 1, 500) AS article_content,
-                   create_time
-            FROM t_article
-            WHERE is_delete = 0
-              and status = 1
-            ORDER BY create_time DESC
+    <select id="listNotesByTagId" resultMap="NoteCardDTOResultMap">
+        SELECT a.id                         AS id,
+               note_cover,
+               note_title,
+               SUBSTR(note_content, 1, 300) AS note_content,
+               is_featured,
+               STATUS,
+               a.create_time                AS create_time,
+               a.update_time                AS update_time,
+               u.nickname                   AS author_nickname,
+               u.website                    AS author_website,
+               u.avatar                     AS author_avatar,
+               c.collection_name            AS collection_name,
+               c.id                         AS collection_id,
+               tag_name,
+               nt.tag_id                    AS tag_id,
+               note_count,
+               note_time,
+               note_quotes
+        FROM (SELECT id,
+                     user_id,
+                     collection_id,
+                     note_cover,
+                     note_title,
+                     note_content,
+                     is_featured,
+                     is_delete,
+                     STATUS,
+                     create_time,
+                     update_time,
+                     note_count,
+                     note_time,
+                     note_quotes
+              FROM t_note
+              WHERE is_delete = 0
+                AND STATUS IN (1, 2)
+              ORDER BY id DESC) a
+                 LEFT JOIN t_note_tag nt ON a.id = nt.note_id
+                 LEFT JOIN t_tag t ON t.id = nt.tag_id
+                 LEFT JOIN t_collection c ON a.collection_id = c.id
+                 LEFT JOIN t_user_info u ON a.user_id = u.id
+        WHERE a.id IN (SELECT a.id AS id
+                       FROM (SELECT id FROM t_note WHERE is_delete = 0 AND STATUS IN (1, 2) ORDER BY id DESC) a
+                                LEFT JOIN t_note_tag nt ON a.id = nt.note_id
+                       WHERE nt.tag_id = #{tagId})
+    </select>
+    <select id="listArchives" resultType="com.aurora.model.dto.ArticleCardDTO">
+        SELECT id,
+               article_title,
+               SUBSTR(article_content, 1, 500) AS article_content,
+               create_time
+        FROM t_article
+        WHERE is_delete = 0
+          and status = 1
+        ORDER BY create_time DESC
             LIMIT #{current}, #{size}
-        </select>
+    </select>
     <select id="countNoteAdmins" resultType="java.lang.Integer">
         SELECT
         count(DISTINCT a.id)
@@ -523,11 +528,11 @@
         is_featured DESC,
         a.id DESC
     </select>
-    <!--    <select id="listArticleStatistics" resultType="com.aurora.model.dto.ArticleStatisticsDTO">-->
-    <!--        SELECT DATE_FORMAT(create_time, "%Y-%m-%d") AS date,-->
-    <!--               COUNT(1)                             AS count-->
-    <!--        FROM t_article-->
-    <!--        GROUP BY date-->
-    <!--        ORDER BY date DESC-->
-    <!--    </select>-->
+        <select id="listNoteStatistics" resultType="com.aurora.model.dto.ArticleStatisticsDTO">
+            SELECT DATE_FORMAT(create_time, "%Y-%m-%d") AS date,
+                   COUNT(1)                             AS count
+            FROM t_note
+            GROUP BY date
+            ORDER BY date DESC
+        </select>
 </mapper>

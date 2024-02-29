@@ -32,12 +32,14 @@ import Paginator from '@/components/Paginator.vue'
 import { useRoute } from 'vue-router'
 import api from '@/api/api'
 import markdownToHtml from '@/utils/markdown'
+import { useAppStore } from '@/stores/app'
 
 export default defineComponent({
   name: 'ArticleList',
   components: { Breadcrumb, ArticleCard, Paginator },
   setup() {
     const route = useRoute()
+    const appStore = useAppStore()
     const pagination = reactive({
       size: 12,
       total: 0,
@@ -51,6 +53,7 @@ export default defineComponent({
     onMounted(() => {
       reactiveData.tagName = route.query.tagName
       fetchArticles()
+      appStore.loadStyle()
     })
     const fetchArticles = () => {
       reactiveData.haveArticles = false

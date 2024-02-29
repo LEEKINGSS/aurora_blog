@@ -120,6 +120,9 @@
         <el-form-item label="访问密码" v-if="note.status == 2">
           <el-input v-model="note.password" placeholder="请填写笔记访问密码" />
         </el-form-item>
+        <el-form-item label="说写什么">
+          <el-input v-model="note.noteQuotes" :rows="2" type="textarea" placeholder="写上你此刻想说的话"></el-input>
+        </el-form-item>
       </el-form>
       <div slot="footer">
         <el-button @click="addOrEdit = false">取 消</el-button>
@@ -181,7 +184,8 @@ export default {
         collectionName: null,
         tagNames: [],
         type: 1,
-        status: 1
+        status: 1,
+        noteQuotes: ''
       },
       headers: { Authorization: 'Bearer ' + sessionStorage.getItem('token') }
     }

@@ -52,4 +52,7 @@ public class NoteVO {
 
     @ApiModelProperty(name = "password", value = "笔记访问密码", dataType = "String")
     private String password;
+
+    @ApiModelProperty(name = "noteQuotes", value = "名言", dataType = "String")
+    private String noteQuotes;
 }

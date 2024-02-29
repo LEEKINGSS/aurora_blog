@@ -5,12 +5,12 @@
 &:root {
   --font-color: #000;
   --night-font-color: #ddd;
-  --primary: #b2fefa;
+  --text-note-title: #b2fefa;
   --secondary: #0ed2f7;
   --dark: #0052d4;
   --gradient-light: #5d9eea;
   --gradient-middle: #0f27b5;
-  --gradient-dark: #100e17;
+  --background-primary: #100e17;
   --code-gradient-light: #cff0ff;
   --code-gradient-dark: #afcafd;
   --maxwidth: 1284px;
@@ -68,14 +68,14 @@ h1, h2, h3, h4, h5, h6 {
     font-weight: 600;
     background: #b2fefa !important;
     background: -webkit-linear-gradient(to right, #b2fefa, #0ed2f7, #0052d4) !important;
-    background: linear-gradient(to right, #b2fefa, #0ed2f7, #0052d4) !important;
+    background: linear-gradient(to right, var(--text-note-title), #0ed2f7, #0052d4) !important;
     -webkit-background-clip: text !important;
     -webkit-text-fill-color: transparent !important;
     -webkit-box-decoration-break: clone !important;
     box-decoration-break: clone !important;
 
     &:hover {
-      background: #fff !important;
+      background: var(--text-bright) !important;
       -webkit-background-clip: text !important;
       -webkit-text-fill-color: transparent !important;
       -webkit-box-decoration-break: clone !important;
@@ -238,9 +238,9 @@ audio {
 
 .la-ball-atom > div:nth-child(1) {
   color: var(--dark);
-  background: var(--primary) !important;
-  background: -webkit-linear-gradient(to right, var(--primary), var(--secondary), var(--dark)) !important;
-  background: linear-gradient(to right, var(--primary), var(--secondary), var(--dark)) !important;
+  background: var(--text-note-title) !important;
+  background: -webkit-linear-gradient(to right, var(--text-note-title), var(--secondary), var(--dark)) !important;
+  background: linear-gradient(to right, var(--text-note-title), var(--secondary), var(--dark)) !important;
 }
 
 .icon-cross {
@@ -328,8 +328,8 @@ img.spin {
 }
 
 .screen-gradient-after {
-  background: -webkit-gradient(linear, left top, right top, from(var(--primary)), to(var(--gradient-dark)));
-  background: linear-gradient(to right, var(--primary), var(--dark), var(--gradient-middle), var(--gradient-dark));
+  background: -webkit-gradient(linear, left top, right top, from(var(--text-note-title)), to(var(--background-primary)));
+  background: linear-gradient(to right, var(--text-note-title), var(--dark), var(--gradient-middle), var(--background-primary));
   position: relative;
   z-index: 0;
   border-bottom-right-radius: 180px;
@@ -494,17 +494,21 @@ body.mu {
   a {
     font-size: 16px;
     letter-spacing: 5px;
-    border: 5px solid rgba(255, 255, 255, 0.46);
+    border: 5px solid var(--boder-note-tag);
     border-radius: 10px;
     padding: 10px 40px;
     background: #100e17;
-    background: var(--primary) !important;
-    background: -webkit-linear-gradient(to right, var(--primary), var(--secondary), var(--dark)) !important;
-    background: linear-gradient(to right, var(--primary), var(--secondary), var(--dark)) !important;
+    background: var(--text-note-title) !important;
+    background: -webkit-linear-gradient(to right, var(--text-note-title), var(--secondary), var(--dark)) !important;
+    background: linear-gradient(to right, var(--text-note-title), var(--secondary), var(--dark)) !important;
     -webkit-background-clip: text !important;
     -webkit-text-fill-color: transparent !important;
     -webkit-box-decoration-break: clone !important;
     box-decoration-break: clone !important;
+
+    &:hover {
+      border: 3px solid var(--boder-note-hover);
+    }
   }
 }
 
@@ -577,8 +581,8 @@ body.touch {
 
 .subtitle {
   background: #b2fefa !important;
-  background: -webkit-linear-gradient(to right, var(--primary), var(--secondary), var(--dark)) !important;
-  background: linear-gradient(to right, var(--primary), var(--secondary), var(--dark)) !important;
+  background: -webkit-linear-gradient(to right, var(--text-note-title), var(--secondary), var(--dark)) !important;
+  background: linear-gradient(to right, var(--text-note-title), var(--secondary), var(--dark)) !important;
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
   -webkit-box-decoration-break: clone !important;
@@ -605,8 +609,8 @@ body.touch {
   font-size: 15px;
   cursor: pointer;
   background: #b2fefa !important;
-  background: -webkit-linear-gradient(to right, var(--primary), var(--secondary), var(--dark)) !important;
-  background: linear-gradient(to right, var(--primary), var(--secondary), var(--dark)) !important;
+  background: -webkit-linear-gradient(to right, var(--text-note-title), var(--secondary), var(--dark)) !important;
+  background: linear-gradient(to right, var(--text-note-title), var(--secondary), var(--dark)) !important;
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
   -webkit-box-decoration-break: clone !important;
@@ -624,8 +628,8 @@ body.touch {
   cursor: pointer;
   font-weight: 300;
   background: #b2fefa !important;
-  background: -webkit-linear-gradient(to right, var(--primary), var(--secondary), var(--dark)) !important;
-  background: linear-gradient(to right, var(--primary), var(--secondary), var(--dark)) !important;
+  background: -webkit-linear-gradient(to right, var(--text-note-title), var(--secondary), var(--dark)) !important;
+  background: linear-gradient(to right, var(--text-note-title), var(--secondary), var(--dark)) !important;
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
   -webkit-box-decoration-break: clone !important;
@@ -641,8 +645,8 @@ body.touch {
   font-size: 18px;
   cursor: pointer;
   background: #b2fefa !important;
-  background: -webkit-linear-gradient(to right, var(--primary), var(--secondary), var(--dark)) !important;
-  background: linear-gradient(to right, var(--primary), var(--secondary), var(--dark)) !important;
+  background: -webkit-linear-gradient(to right, var(--text-note-title), var(--secondary), var(--dark)) !important;
+  background: linear-gradient(to right, var(--text-note-title), var(--secondary), var(--dark)) !important;
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
   -webkit-box-decoration-break: clone !important;
@@ -703,8 +707,8 @@ body.touch {
     display: inline-block;
     margin-right: 15px;
     background: #b2fefa !important;
-    background: -webkit-linear-gradient(to right, var(--primary), var(--secondary), var(--dark)) !important;
-    background: linear-gradient(to right, var(--primary), var(--secondary), var(--dark)) !important;
+    background: -webkit-linear-gradient(to right, var(--text-note-title), var(--secondary), var(--dark)) !important;
+    background: linear-gradient(to right, var(--text-note-title), var(--secondary), var(--dark)) !important;
     -webkit-background-clip: text !important;
     -webkit-text-fill-color: transparent !important;
     -webkit-box-decoration-break: clone !important;
@@ -760,12 +764,12 @@ body.touch {
   top: 50px;
 }
 
-.bar {
+.bars {
   position: absolute;
   height: 100%;
   background: #b2fefa !important;
-  background: -webkit-linear-gradient(to right, var(--dark), var(--secondary), var(--primary)) !important;
-  background: linear-gradient(to right, var(--dark), var(--secondary), var(--primary)) !important;
+  background: -webkit-linear-gradient(to right, var(--dark), var(--secondary), var(--text-note-title)) !important;
+  background: linear-gradient(to right, var(--dark), var(--secondary), var(--text-note-title)) !important;
   z-index: -1;
   width: 0;
   -webkit-transition: width .5s ease-in-out;
@@ -794,7 +798,7 @@ body.touch {
 }
 
 &::-webkit-scrollbar-thumb {
-  background: var(--primary) !important;
+  background: var(--text-note-title) !important;
   background: -webkit-linear-gradient(var(--secondary), var(--dark)) !important;
   background: linear-gradient(var(--secondary), var(--dark)) !important;
   border-radius: 10px;
@@ -1122,9 +1126,9 @@ footer {
 
     &:hover {
       color: #333;
-      background: var(--primary) !important;
-      background: -webkit-linear-gradient(to right, var(--primary), var(--secondary), var(--dark)) !important;
-      background: linear-gradient(to right, var(--primary), var(--secondary), var(--dark)) !important;
+      background: var(--text-note-title) !important;
+      background: -webkit-linear-gradient(to right, var(--text-note-title), var(--secondary), var(--dark)) !important;
+      background: linear-gradient(to right, var(--text-note-title), var(--secondary), var(--dark)) !important;
       -webkit-background-clip: text !important;
       -webkit-text-fill-color: transparent !important;
       -webkit-box-decoration-break: clone !important;
@@ -1172,7 +1176,7 @@ footer {
       height: 400px;
       top: 0;
       left: 50%;
-      background: var(--primary) !important;
+      background: var(--text-note-title) !important;
       background: -webkit-linear-gradient(var(--dark), var(--secondary)) !important;
       background: linear-gradient(var(--dark), var(--secondary)) !important;
       opacity: 0.4;
@@ -1184,7 +1188,7 @@ footer {
 
     &::after {
       border-radius: 47%;
-      background: var(--primary) !important;
+      background: var(--text-note-title) !important;
       background: -webkit-linear-gradient(var(--dark), var(--secondary)) !important;
       background: linear-gradient(var(--dark), var(--secondary)) !important;
       opacity: 0.9;
@@ -1455,9 +1459,9 @@ footer {
       font-weight: 800;
 
       &:hover {
-        background: var(--primary) !important;
-        background: -webkit-linear-gradient(to right, var(--primary), var(--secondary), var(--dark)) !important;
-        background: linear-gradient(to right, var(--primary), var(--secondary), var(--dark)) !important;
+        background: var(--text-note-title) !important;
+        background: -webkit-linear-gradient(to right, var(--text-note-title), var(--secondary), var(--dark)) !important;
+        background: linear-gradient(to right, var(--text-note-title), var(--secondary), var(--dark)) !important;
         -webkit-background-clip: text !important;
         -webkit-text-fill-color: transparent !important;
         -webkit-box-decoration-break: clone !important;
@@ -1771,7 +1775,8 @@ footer {
   padding-bottom: 100px;
   overflow: hidden;
   position: relative;
-  background: #100e17;
+  background: var(--background-primary);
+  border-bottom :5px solid #0fb6d6;
 }
 
 #primary {
@@ -2308,7 +2313,7 @@ h1.title {
       &:hover {
         font-weight: 800;
         color: #000;
-        background: var(--primary) !important;
+        background: var(--text-note-title) !important;
         background: -webkit-linear-gradient(25deg, var(--dark), var(--secondary)) !important;
         background: linear-gradient(25deg, var(--dark), var(--secondary)) !important;
         -webkit-background-clip: text !important;
@@ -2330,7 +2335,7 @@ h1.title {
       &.active {
         font-weight: 800;
         color: #000;
-        background: var(--primary) !important;
+        background: var(--text-note-title) !important;
         background: -webkit-linear-gradient(25deg, var(--dark), var(--secondary)) !important;
         background: linear-gradient(25deg, var(--dark), var(--secondary)) !important;
         -webkit-background-clip: text !important;
@@ -2346,7 +2351,7 @@ h1.title {
           content: "";
           width: 10px;
           height: 10px;
-          background: var(--primary) !important;
+          background: var(--text-note-title) !important;
           background: -webkit-linear-gradient(225deg, var(--secondary), var(--dark)) !important;
           background: linear-gradient(225deg, var(--secondary), var(--dark)) !important;
           border-radius: 50%;
@@ -2494,7 +2499,8 @@ h1.title {
 .article-header-wrapper {
   width: 100%;
   //height: 500px;
-  background: #100e17;
+  //background: #100e17;
+  background: var(--background-primary-note);
   position: relative;
   z-index: 1;
   border-bottom-right-radius: 200px;
@@ -2590,7 +2596,7 @@ h1.title {
   }
 
   > p {
-    color: #7a7a8c;
+    color: var(--text-dim);
     font-size: 14px;
     font-weight: 900;
     margin: 80px 0 0 0;
@@ -2611,7 +2617,7 @@ h1.title {
       b {
         color: var(--secondary);
       }
-      color: #fff;
+      color: var(--text-bright);
     }
 
   }
@@ -2742,8 +2748,8 @@ h1.title {
         transition: all 200ms ease-in-out;
 
         &:hover {
-          color: var(--primary);
-          border-bottom: var(--primary) 1px solid;
+          color: var(--text-note-title);
+          border-bottom: var(--text-note-title) 1px solid;
         }
       }
     }
@@ -2766,18 +2772,18 @@ h1.title {
       display: flex;
       justify-content: center;
       align-content: center;
-      color: #fff;
+      color: var(--text-bright);
 
       i {
         margin-right: 5px;
-        color: #7a7a8c;
+        color: var(--text-dim);
         font-weight: 900;
         font-style: normal;
       }
 
       b {
         font-size: 20px;
-        color: #7a7a8c;
+        color: var(--text-dim);
         margin-right: 5px;
       }
     }
@@ -2790,7 +2796,7 @@ h1.title {
   }
 
   .post-tags-list-link {
-    color: #9E9E9E;
+    color: var(--text-normal);
   }
 
   .post-tags-list-item {
@@ -2802,17 +2808,17 @@ h1.title {
     font-weight: 700;
     font-size: .66rem;
     white-space: nowrap;
-    border: 3px solid rgba(40, 36, 47, 0.86);
+    border: 3px solid var(--boder-note-tag);
     border-radius: 2rem;
-    background: rgba(16, 14, 23, 0.56);
+    background: var(--background-note-tag);
 
     &:hover {
-      border: 3px solid rgba(255, 255, 255, 0.78);
+      border: 3px solid var(--boder-note-hover);
 
       a {
-        background: var(--primary) !important;
-        background: -webkit-linear-gradient(to right, var(--primary), var(--secondary), var(--dark)) !important;
-        background: linear-gradient(to right, var(--primary), var(--secondary), var(--dark)) !important;
+        background: var(--text-note-title) !important;
+        background: -webkit-linear-gradient(to right, var(--text-note-title), var(--secondary), var(--dark)) !important;
+        background: linear-gradient(to right, var(--text-note-title), var(--secondary), var(--dark)) !important;
         -webkit-background-clip: text !important;
         -webkit-text-fill-color: transparent !important;
         -webkit-box-decoration-break: clone !important;
@@ -2822,9 +2828,9 @@ h1.title {
 
     a {
       &:hover {
-        background: var(--primary) !important;
-        background: -webkit-linear-gradient(to right, var(--primary), var(--secondary), var(--dark)) !important;
-        background: linear-gradient(to right, var(--primary), var(--secondary), var(--dark)) !important;
+        background: var(--text-note-title) !important;
+        background: -webkit-linear-gradient(to right, var(--text-note-title), var(--secondary), var(--dark)) !important;
+        background: linear-gradient(to right, var(--text-note-title), var(--secondary), var(--dark)) !important;
         -webkit-background-clip: text !important;
         -webkit-text-fill-color: transparent !important;
         -webkit-box-decoration-break: clone !important;
@@ -2908,7 +2914,7 @@ h1.title {
     position: relative;
 
     a {
-      color: #ddd;
+      color: var(--night-font-color);
       font-weight: 900;
 
       &:hover {
@@ -2970,9 +2976,9 @@ h1.title {
   cursor: pointer;
 
   &:hover {
-    background: var(--primary) !important;
-    background: -webkit-linear-gradient(to right, var(--primary), var(--secondary), var(--dark)) !important;
-    background: linear-gradient(to right, var(--primary), var(--secondary), var(--dark)) !important;
+    background: var(--text-note-title) !important;
+    background: -webkit-linear-gradient(to right, var(--text-note-title), var(--secondary), var(--dark)) !important;
+    background: linear-gradient(to right, var(--text-note-title), var(--secondary), var(--dark)) !important;
     -webkit-background-clip: text !important;
     -webkit-text-fill-color: transparent !important;
     -webkit-box-decoration-break: clone !important;
@@ -3175,7 +3181,7 @@ h1.title {
       transition: all 200ms ease-in-out;
 
       &:hover {
-        color: var(--primary);
+        color: var(--text-note-title);
         -webkit-text-fill-color: var(--dark) !important;
         border-bottom: var(--dark) 1px solid;
       }

@@ -1,11 +1,10 @@
 <template>
   <nav class="items-center flex-1 hidden lg:flex">
-    <ul class="flex flex-row list-none px-6 text-white">
+    <ul class="flex flex-row list-none px-6 text-white index-css">
       <li
         class="not-italic font-medium text-xs h-full relative flex flex-col items-center justify-center cursor-pointer text-center py-4 px-2"
         v-for="route in routes"
         :key="route.path">
-<!--        <div>{{route}}</div>-->
         <div
           class="nav-link text-sm block px-1.5 py-0.5 rounded-md relative uppercase cursor-pointer"
           @click="pushPage(route.path)"
@@ -45,23 +44,33 @@
         </Dropdown>
       </li>
     </ul>
+    <div class="flex flex-row player">
+      <Music v-if="!isMobile"/>
+    </div>
   </nav>
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, reactive, toRefs } from 'vue'
-import { useRouter } from 'vue-router'
+import { computed, defineComponent, onMounted, reactive, toRefs } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { Dropdown, DropdownMenu, DropdownItem } from '@/components/Dropdown'
 import { isExternal } from '@/utils/validate'
 import config from '@/config/config'
 import api from '@/api/api'
+import { useAppStore } from '@/stores/app'
+import { Music } from '@/components/Music'
+import { useCommonStore } from '@/stores/common'
+
+
 export default defineComponent({
   name: 'Navigation',
-  components: { Dropdown, DropdownMenu, DropdownItem },
+  components: { Dropdown, DropdownMenu, DropdownItem, Music },
   setup() {
     const { t, te } = useI18n()
     const router = useRouter()
+    const appStore = useAppStore()
+    const commonStore = useCommonStore() // 是否为手机端
     const pushPage = (path: string): void => {
       if (!path) return
       if (isExternal(path)) {
@@ -84,9 +93,9 @@ export default defineComponent({
       router.push('/photos/' + id)
     }
     return {
+      isMobile: computed(() => commonStore.isMobile),
       ...toRefs(reactiveData),
       routes: config.routes,
-      // routes: routes,
       pushPage,
       openPhotoAlbum,
       te,
@@ -104,6 +113,7 @@ export default defineComponent({
       @apply opacity-60;
     }
   }
+
   &:before {
     @apply absolute rounded-lg opacity-0 transition bg-ob-deep-800 z-40;
     content: '';
@@ -112,5 +122,12 @@ export default defineComponent({
     width: calc(100% + 8px);
     height: calc(100% + 8px);
   }
+}
+
+.index-css {
+  color: var(--text-note-header)
+}
+.player{
+  padding-left: 25%;
 }
 </style>

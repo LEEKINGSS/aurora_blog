@@ -28,6 +28,7 @@ import { Comment } from '../components/Comment'
 import { useCommentStore } from '@/stores/comment'
 import api from '@/api/api'
 import emitter from '@/utils/mitt'
+import { useAppStore } from '@/stores/app'
 
 export default defineComponent({
   name: 'Message',
@@ -35,6 +36,7 @@ export default defineComponent({
   setup() {
     const { t } = useI18n()
     const commentStore = useCommentStore()
+    const appStore = useAppStore()
     const reactiveData = reactive({
       comments: [] as any,
       haveMore: false as any,
@@ -47,6 +49,7 @@ export default defineComponent({
     commentStore.type = 2
     onMounted(() => {
       fetchComments()
+      appStore.loadStyle()
     })
     provide(
       'comments',

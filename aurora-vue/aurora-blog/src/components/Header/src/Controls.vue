@@ -1,5 +1,6 @@
 <template>
   <div class="header-controls absolute top-10 right-0 flex flex-row" @keydown.k="handleOpenModel" tabindex="0">
+<!--    <Music/>-->
     <span class="ob-drop-shadow" data-dia="search" @click="handleOpenModel">
       <svg-icon icon-class="search" />
     </span>
@@ -139,6 +140,7 @@ import { useSearchStore } from '@/stores/search'
 import config from '@/config/config'
 import { useI18n } from 'vue-i18n'
 import emitter from '@/utils/mitt'
+import { Music } from '@/components/Music'
 
 
 export default defineComponent({
@@ -148,7 +150,8 @@ export default defineComponent({
     DropdownMenu,
     DropdownItem,
     ThemeToggle,
-    SearchModel
+    SearchModel,
+    Music
   },
   setup() {
     const { t } = useI18n()
@@ -480,7 +483,7 @@ export default defineComponent({
     display: flex;
     justify-content: center;
     align-items: center;
-    color: #fff;
+    color: var(--text-bright);
     cursor: pointer;
     transition: opacity 250ms ease;
     padding-right: 0.5rem;
@@ -493,7 +496,7 @@ export default defineComponent({
       opacity: 0.5;
     }
     .svg-icon {
-      stroke: #fff;
+      stroke: var(--text-bright);
       height: 2rem;
       width: 2rem;
       margin-right: 0.5rem;

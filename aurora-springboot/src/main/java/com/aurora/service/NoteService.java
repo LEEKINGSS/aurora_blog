@@ -34,8 +34,6 @@ public interface NoteService extends IService<Note> {
      */
     PageResultDTO<NoteCardDTO> listNotesByTagId(Integer tagId);
 
-    PageResultDTO<ArchiveDTO> listArchives();
-
     PageResultDTO<NoteAdminDTO> listNotesAdmin(ConditionVO conditionVO);
 
     void saveOrUpdateNote(NoteVO noteVO);

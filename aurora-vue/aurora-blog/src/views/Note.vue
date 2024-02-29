@@ -1,27 +1,27 @@
 <template>
-  <ul>
-    <template v-if="haveNotes === true">
-      <li v-for="note in notes" :key="note.id">
-        <NoteCard :data="note" @tabChange="handleTabChange" @tagChange="handleTagChange"></NoteCard>
-      </li>
+  <div>
+    <ul>
+      <template v-if="haveNotes === true">
+        <li v-for="note in notes" :key="note.id">
+          <NoteCard :data="note" @tabChange="handleTabChange" @tagChange="handleTagChange"></NoteCard>
+        </li>
+      </template>
+    </ul>
+    <template v-if="loadMore === true">
+      <div id="container">
+        <div id="primary"></div>
+        <div id="pager"><a href="#" class="more" @click.prevent="pageChangeHanlder">加载更多</a></div>
+      </div>
     </template>
-  </ul>
+  </div>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, ref, toRefs, toRef, reactive } from 'vue'
-import { Feature, FeatureList } from '@/components/Feature'
-import { ArticleCard, HorizontalArticle } from '@/components/ArticleCard'
-import { Title } from '@/components/Title'
-import { Sidebar, Profile, RecentComment, TagBox, Notice, WebsiteInfo } from '@/components/Sidebar'
+import { defineComponent, onMounted, toRefs, reactive } from 'vue'
 import { NoteCard } from '@/components/NoteCard'
 import { useAppStore } from '@/stores/app'
 import { useUserStore } from '@/stores/user'
 import { useNoteStore } from '@/stores/note'
-import { useCollectionStore } from '@/stores/collection'
-import { useCategoryStore } from '@/stores/Category'
-import { useI18n } from 'vue-i18n'
-import Paginator from '@/components/Paginator.vue'
 import api from '@/api/api'
 import markdownToHtml from '@/utils/markdown'
 
@@ -31,54 +31,22 @@ export default defineComponent({
     NoteCard
   },
   setup() {
-    const appStore = useAppStore()
     const userStore = useUserStore()
     const noteStore = useNoteStore()
-    const collectionStore = useCollectionStore()
-    const { t } = useI18n()
+    const appStore = useAppStore()
     const pagination = reactive({
       size: 10,
       total: 0,
       current: 1
     })
     const reactiveData = reactive({
-      haveNotes: false
+      haveNotes: false,
+      loadMore: true
     })
     onMounted(() => {
-      fetchCollections()
       fetchNotes()
-      loadStyle()
+      appStore.loadNoteStyle()
     })
-    const loadStyle = () => {
-      let element = document.querySelector('#app .app-wrapper .app-container') as HTMLElement
-      if (element) {
-        // 修改全局margin值
-        element.style.margin = '0'
-      }
-      let maxScreen = document.querySelector(' .lg\\:max-w-screen-2xl') as HTMLElement
-      if (maxScreen) {
-        // 修改屏幕最大宽度
-        maxScreen.style.maxWidth = '100%'
-      }
-      let padding = document.querySelector(' .lg\\:px-8') as HTMLElement
-      if (padding) {
-        // 修改padding值
-        padding.style.padding = '0'
-      }
-      let position = document.querySelector('.header-container') as HTMLElement
-      if (position) {
-        // 修改页面布局
-        position.style.position = 'absolute'
-        position.style.width = '80%'
-        position.style.left = '9%'
-      }
-    }
-    const fetchCollections = () => {
-      collectionStore.collections = []
-      api.getAllCollections().then(({ data }) => {
-        collectionStore.collections.push(...data.data)
-      })
-    }
     const fetchNotes = () => {
       pagination.current = userStore.page
       reactiveData.haveNotes = false
@@ -88,7 +56,6 @@ export default defineComponent({
           size: pagination.size
         })
         .then(({ data }) => {
-          console.log(data)
           if (data.flag) {
             data.data.records.forEach((item: any) => {
               item.noteContent = markdownToHtml(item.noteContent)
@@ -96,7 +63,8 @@ export default defineComponent({
                 .replace(/[|]*\n/, '')
                 .replace(/&npsp;/gi, '')
             })
-            noteStore.notes = data.data.records
+            prePageChangeHanlder(data)
+            noteStore.allNotes = data.data.records
             pagination.total = data.data.count
             reactiveData.haveNotes = true
           }
@@ -110,12 +78,9 @@ export default defineComponent({
       reactiveData.haveNotes = false
       api
         .getNotesByCollectionId({
-          current: pagination.current,
-          size: pagination.size,
           collectionId: collectionId
         })
         .then(({ data }) => {
-          console.log(data)
           if (data.flag) {
             data.data.records.forEach((item: any) => {
               item.noteContent = markdownToHtml(item.noteContent)
@@ -123,7 +88,7 @@ export default defineComponent({
                 .replace(/[|]*\n/, '')
                 .replace(/&npsp;/gi, '')
             })
-            noteStore.notes = data.data.records
+            noteStore.allNotes = data.data.records
             pagination.total = data.data.count
             reactiveData.haveNotes = true
           }
@@ -136,8 +101,6 @@ export default defineComponent({
       reactiveData.haveNotes = false
       api
         .getNotesByTagId({
-          current: pagination.current,
-          size: pagination.size,
           tagId: tagId
         })
         .then(({ data }) => {
@@ -148,7 +111,7 @@ export default defineComponent({
                 .replace(/[|]*\n/, '')
                 .replace(/&npsp;/gi, '')
             })
-            noteStore.notes = data.data.records
+            noteStore.allNotes = data.data.records
             pagination.total = data.data.count
             reactiveData.haveNotes = true
           }
@@ -157,26 +120,37 @@ export default defineComponent({
     /**
      * 对笔记进行分页操作
      */
-    const pageChangeHanlder = (notes: any) => {
+    const prePageChangeHanlder = (data: any) => {
+      if (pagination.current * pagination.size > data.data.count) {
+        noteStore.notes = data.data.records.slice(0, data.data.count)
+        reactiveData.loadMore = false
+      } else {
+        noteStore.notes = data.data.records.slice(0, pagination.current * pagination.size)
+      }
+    }
+    const pageChangeHanlder = () => {
+      const notes = noteStore.allNotes
+      pagination.current++
       if (pagination.current * pagination.size > pagination.total) {
         noteStore.notes = notes.slice(0, pagination.total)
+        reactiveData.loadMore = false
       } else {
         noteStore.notes = notes.slice(0, pagination.current * pagination.size)
       }
-      pagination.current++
     }
+
     const handleTabChange = (collectionId: any) => {
       fetchNotesByCollectionId(collectionId)
     }
     const handleTagChange = (tagId: any) => {
       fetchNotesByTagId(tagId)
-      pageChangeHanlder(noteStore.notes)
     }
     return {
       ...toRefs(reactiveData),
       ...toRefs(noteStore.$state),
       handleTabChange,
-      handleTagChange
+      handleTagChange,
+      pageChangeHanlder
     }
   }
 })
@@ -198,4 +172,10 @@ export default defineComponent({
     }
   }
 }
+</style>
+
+<!-- 通过@import语法将.styl文件导入到当前组件的样式中 -->
+<style lang="stylus" scoped>
+@import '@/styles/source/css/obsidian.styl';
+/* 其他样式 */
 </style>

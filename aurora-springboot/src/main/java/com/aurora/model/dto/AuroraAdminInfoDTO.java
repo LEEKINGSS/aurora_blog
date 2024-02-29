@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Collection;
 import java.util.List;
 
 @Data
@@ -21,7 +22,11 @@ public class AuroraAdminInfoDTO {
 
     private Integer articleCount;
 
+    private Integer noteCount;
+
     private List<CategoryDTO> categoryDTOs;
+
+    private List<CollectionDTO> collectionDTOs;
 
     private List<TagDTO> tagDTOs;
 
@@ -31,4 +36,5 @@ public class AuroraAdminInfoDTO {
 
     private List<ArticleRankDTO> articleRankDTOs;
 
+    private List<NoteRankDTO> noteRankDTOs;
 }

@@ -42,10 +42,12 @@ public class Article {
 
     private String originalUrl;
 
+    private String archiveId;
+
+
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;
 
     @TableField(fill = FieldFill.UPDATE)
     private LocalDateTime updateTime;
-
 }

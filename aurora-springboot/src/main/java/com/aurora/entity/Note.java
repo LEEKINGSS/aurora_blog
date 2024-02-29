@@ -99,4 +99,14 @@ public class Note {
      */
     private String noteTime;
 
+    /**
+     * 笔记名言
+     */
+    private String noteQuotes;
+
+    /**
+     * 笔记归档id
+     */
+    private String archiveId;
+
 }

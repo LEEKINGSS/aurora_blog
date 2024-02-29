@@ -4,14 +4,15 @@
       <div class="article-covers animated fadeIn" :style="{
       animationDelay: '600ms',
       animationDuration: '1.2s',
-      backgroundImage: 'radial-gradient(ellipse closest-side,rgba(0,0,0,0.65), #100e17), url(' + note.noteCover + ')'
+      backgroundImage: 'radial-gradient(ellipse closest-side,var(--background-image), var(--background-primary-note)), url(' + note.noteCover + ')'
     }">
       </div>
       <div class="else">
         <p class="animated fadeInDown">
           <a href="#" v-if="note.collectionName"
              @click.prevent="$emit('tabChange',note.collectionId)"><b>「 </b>{{ note.collectionName }}<b> 」</b></a>
-          {{ note.createTime }}
+          {{ t('settings.shared-on') }} {{ t(`settings.months[${new Date(note.createTime).getMonth()}]`) }}
+          {{ new Date(note.createTime).getDate() }}, {{ new Date(note.createTime).getFullYear() }}
         </p>
         <h3 class="post-title animated fadeInDown">
           <a class="posttitle" href="#" :title="note.noteTitle" @click.prevent="toNote">{{ note.noteTitle }}</a>
@@ -41,7 +42,7 @@
       </div>
     </div>
   </div>
-  <Screen></Screen>
+  <Screen :data="note.noteQuotes"></Screen>
 </template>
 
 <script lang="ts">
@@ -56,6 +57,7 @@ import emitter from '@/utils/mitt'
 export default defineComponent({
   name: 'NoteCard',
   components: { Screen },
+  emits: ['tabChange', 'tagChange'],
   props: ['data'],
   setup(props) {
     const proxy: any = getCurrentInstance()?.appContext.config.globalProperties

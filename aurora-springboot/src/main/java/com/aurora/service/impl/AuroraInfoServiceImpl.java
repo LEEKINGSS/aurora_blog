@@ -1,6 +1,7 @@
 package com.aurora.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.aurora.entity.Collection;
 import com.aurora.model.dto.*;
 import com.aurora.entity.*;
 import com.aurora.mapper.*;
@@ -68,6 +69,12 @@ public class AuroraInfoServiceImpl implements AuroraInfoService {
     @Autowired
     private HttpServletRequest request;
 
+    @Autowired
+    private NoteMapper noteMapper;
+
+    @Autowired
+    private CollectionMapper collectionMapper;
+
 
     @Override
     public void report() {
@@ -119,11 +126,16 @@ public class AuroraInfoServiceImpl implements AuroraInfoService {
         Integer userCount = userInfoMapper.selectCount(null);
         Integer articleCount = articleMapper.selectCount(new LambdaQueryWrapper<Article>()
                 .eq(Article::getIsDelete, FALSE));
+        Integer noteCount = noteMapper.selectCount(new LambdaQueryWrapper<Note>()
+                .eq(Note::getIsDelete, FALSE));
         List<UniqueViewDTO> uniqueViews = uniqueViewService.listUniqueViews();
         List<ArticleStatisticsDTO> articleStatisticsDTOs = articleMapper.listArticleStatistics();
+        articleStatisticsDTOs.addAll(noteMapper.listNoteStatistics());
         List<CategoryDTO> categoryDTOs = categoryMapper.listCategories();
+        List<CollectionDTO> collectionDTOS = collectionMapper.listCollections();
         List<TagDTO> tagDTOs = BeanCopyUtil.copyList(tagMapper.selectList(null), TagDTO.class);
         Map<Object, Double> articleMap = redisService.zReverseRangeWithScore(ARTICLE_VIEWS_COUNT, 0, 4);
+        Map<Object, Double> noteMap = redisService.zReverseRangeWithScore(NOTE_VIEWS_COUNT, 0, 4);
         AuroraAdminInfoDTO auroraAdminInfoDTO = AuroraAdminInfoDTO.builder()
                 .articleStatisticsDTOs(articleStatisticsDTOs)
                 .tagDTOs(tagDTOs)
@@ -131,12 +143,18 @@ public class AuroraInfoServiceImpl implements AuroraInfoService {
                 .messageCount(messageCount)
                 .userCount(userCount)
                 .articleCount(articleCount)
+                .noteCount(noteCount)
                 .categoryDTOs(categoryDTOs)
+                .collectionDTOs(collectionDTOS)
                 .uniqueViewDTOs(uniqueViews)
                 .build();
         if (CollectionUtils.isNotEmpty(articleMap)) {
             List<ArticleRankDTO> articleRankDTOList = listArticleRank(articleMap);
             auroraAdminInfoDTO.setArticleRankDTOs(articleRankDTOList);
+        }
+        if(CollectionUtils.isNotEmpty(noteMap)){
+            List<NoteRankDTO> noteRankDTOList = listNoteRank(noteMap);
+            auroraAdminInfoDTO.setNoteRankDTOs(noteRankDTOList);
         }
         return auroraAdminInfoDTO;
     }
@@ -202,6 +220,20 @@ public class AuroraInfoServiceImpl implements AuroraInfoService {
                         .viewsCount(articleMap.get(article.getId()).intValue())
                         .build())
                 .sorted(Comparator.comparingInt(ArticleRankDTO::getViewsCount).reversed())
+                .collect(Collectors.toList());
+    }
+
+    private List<NoteRankDTO> listNoteRank(Map<Object, Double> noteMap) {
+        List<Integer> noteIds = new ArrayList<>(noteMap.size());
+        noteMap.forEach((key, value) -> noteIds.add((Integer) key));
+        return noteMapper.selectList(new LambdaQueryWrapper<Note>()
+                        .select(Note::getId, Note::getNoteTitle)
+                        .in(Note::getId, noteIds))
+                .stream().map(note -> NoteRankDTO.builder()
+                        .noteTitle(note.getNoteTitle())
+                        .viewsCount(noteMap.get(note.getId()).intValue())
+                        .build())
+                .sorted(Comparator.comparingInt(NoteRankDTO::getViewsCount).reversed())
                 .collect(Collectors.toList());
     }
 

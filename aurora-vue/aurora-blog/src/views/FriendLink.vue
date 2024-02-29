@@ -52,6 +52,7 @@ import { Comment } from '../components/Comment'
 import { useCommentStore } from '@/stores/comment'
 import emitter from '@/utils/mitt'
 import api from '@/api/api'
+import { useAppStore } from '@/stores/app'
 
 export default defineComponent({
   name: 'FriendLink',
@@ -59,6 +60,7 @@ export default defineComponent({
   setup() {
     const { t } = useI18n()
     const commentStore = useCommentStore()
+    const appStore = useAppStore()
     const reactiveData = reactive({
       links: '' as any,
       comments: [] as any,
@@ -73,6 +75,7 @@ export default defineComponent({
     onMounted(() => {
       fetchLinks()
       fetchComments()
+      appStore.loadStyle()
     })
     provide(
       'comments',

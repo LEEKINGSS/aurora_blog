@@ -68,6 +68,7 @@ import Avatar from '../components/Avatar.vue'
 import { v3ImgPreviewFn } from 'v3-img-preview'
 import { useRouter } from 'vue-router'
 import api from '@/api/api'
+import { useAppStore } from '@/stores/app'
 
 export default defineComponent({
   name: 'talkList',
@@ -75,6 +76,7 @@ export default defineComponent({
   setup() {
     const { t } = useI18n()
     const router = useRouter()
+    const appStore = useAppStore()
     const pagination = reactive({
       size: 7,
       total: 0,
@@ -86,6 +88,7 @@ export default defineComponent({
     })
     onMounted(() => {
       fetchTalks()
+      appStore.loadStyle()
     })
     const handlePreview = (index: any) => {
       v3ImgPreviewFn({ images: reactiveData.images, index: reactiveData.images.indexOf(index) })

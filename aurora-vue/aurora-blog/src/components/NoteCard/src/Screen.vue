@@ -1,18 +1,23 @@
 <script setup lang="js">
 import Typed from '@/styles/source/js/typed.min.js'
-import { defineComponent } from 'vue'
+import { defineComponent, ref } from 'vue'
 export default defineComponent({
   name: 'Screen',
+  props: ['data'],
   mounted() {
+    const quote = ref(this.data)
+    if(quote.value == null || quote.value == '') {
+      quote.value = 'Think like an artist, develop like an artisan|艺术家思维去思考问题，工匠创造精神去开发'
+    }
+    let quotes = quote.value.split('|')
     const options = {
-      strings: ['Think like an artist, develop like an artisan', '艺术家思维去思考问题，工匠创造精神去开发'],
+      strings: [quotes[0], quotes[1]],
       typeSpeed: 90,
       loop: true,
       loopCount: Infinity,
       backSpeed: 20,
     };
-
-    const typed = new Typed(this.$refs.typedElement, options);
+    new Typed(this.$refs.typedElement, options);
   }
 })
 </script>
@@ -22,7 +27,7 @@ export default defineComponent({
       <div class="screen-gradient-content-inside">
         <div class="bold-underline-links screen-gradient-sponsor">
           <p>
-            <span class="typed-text" :id="screen" ref="typedElement"></span>
+            <span class="typed-text" ref="typedElement"></span>
           </p>
         </div>
       </div>

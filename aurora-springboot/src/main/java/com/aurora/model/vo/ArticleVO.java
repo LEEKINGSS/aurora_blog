@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -52,4 +53,7 @@ public class ArticleVO {
 
     @ApiModelProperty(name = "password", value = "文章访问密码", dataType = "String")
     private String password;
+
+    @ApiModelProperty(name = "archiveId", value = "文章归档id", dataType = "Integer")
+    private Integer archiveId;
 }

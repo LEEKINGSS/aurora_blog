@@ -1,22 +1,13 @@
 package com.aurora.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.aurora.entity.*;
+import com.aurora.mapper.*;
 import com.aurora.model.dto.*;
-import com.aurora.entity.Article;
-import com.aurora.entity.ArticleTag;
-import com.aurora.entity.Category;
-import com.aurora.entity.Tag;
 import com.aurora.enums.FileExtEnum;
 import com.aurora.enums.FilePathEnum;
 import com.aurora.exception.BizException;
-import com.aurora.mapper.ArticleMapper;
-import com.aurora.mapper.ArticleTagMapper;
-import com.aurora.mapper.CategoryMapper;
-import com.aurora.mapper.TagMapper;
-import com.aurora.service.ArticleService;
-import com.aurora.service.ArticleTagService;
-import com.aurora.service.RedisService;
-import com.aurora.service.TagService;
+import com.aurora.service.*;
 import com.aurora.strategy.context.SearchStrategyContext;
 import com.aurora.strategy.context.UploadStrategyContext;
 import com.aurora.util.BeanCopyUtil;
@@ -40,6 +31,7 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
+import static com.aurora.constant.ArticleConstant.ARTICLE_STATUS_PUBLIC;
 import static com.aurora.constant.RabbitMQConstant.SUBSCRIBE_EXCHANGE;
 import static com.aurora.constant.RedisConstant.*;
 import static com.aurora.enums.ArticleStatusEnum.*;
@@ -77,6 +69,12 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 
     @Autowired
     private SearchStrategyContext searchStrategyContext;
+
+    @Autowired
+    private ArchiveService archiveService;
+
+    @Autowired
+    private ArchiveMapper archiveMapper;
 
     @SneakyThrows
     @Override
@@ -186,38 +184,22 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     @SneakyThrows
     @Override
     public PageResultDTO<ArchiveDTO> listArchives() {
-        LambdaQueryWrapper<Article> queryWrapper = new LambdaQueryWrapper<Article>().eq(Article::getIsDelete, 0).eq(Article::getStatus, 1);
-        CompletableFuture<Integer> asyncCount = CompletableFuture.supplyAsync(() -> articleMapper.selectCount(queryWrapper));
-        List<ArticleCardDTO> articles = articleMapper.listArchives(PageUtil.getLimitCurrent(), PageUtil.getSize());
-        HashMap<String, List<ArticleCardDTO>> map = new HashMap<>();
-        for (ArticleCardDTO article : articles) {
-            LocalDateTime createTime = article.getCreateTime();
-            int month = createTime.getMonth().getValue();
-            int year = createTime.getYear();
-            String key = year + "-" + month;
+        LambdaQueryWrapper<Archive> queryWrapper = new LambdaQueryWrapper<Archive>().eq(Archive::getIsDelete, 0);
+        CompletableFuture<Integer> asyncCount = CompletableFuture.supplyAsync(() -> archiveMapper.selectCount(queryWrapper));
+        List<Archive> archives = archiveMapper.listArchives(PageUtil.getLimitCurrent(), PageUtil.getSize());
+        HashMap<String, List<Archive>> map = new HashMap<>();
+        for (Archive archive : archives) {
+            String key = archive.getTime();
             if (Objects.isNull(map.get(key))) {
-                List<ArticleCardDTO> articleCardDTOS = new ArrayList<>();
-                articleCardDTOS.add(article);
-                map.put(key, articleCardDTOS);
+                List<Archive> archiveList = new ArrayList<>();
+                archiveList.add(archive);
+                map.put(key, archiveList);
             } else {
-                map.get(key).add(article);
+                map.get(key).add(archive);
             }
         }
         List<ArchiveDTO> archiveDTOs = new ArrayList<>();
-        map.forEach((key, value) -> archiveDTOs.add(ArchiveDTO.builder().Time(key).articles(value).build()));
-        archiveDTOs.sort((o1, o2) -> {
-            String[] o1s = o1.getTime().split("-");
-            String[] o2s = o2.getTime().split("-");
-            int o1Year = Integer.parseInt(o1s[0]);
-            int o1Month = Integer.parseInt(o1s[1]);
-            int o2Year = Integer.parseInt(o2s[0]);
-            int o2Month = Integer.parseInt(o2s[1]);
-            if (o1Year > o2Year) {
-                return -1;
-            } else if (o1Year < o2Year) {
-                return 1;
-            } else return Integer.compare(o2Month, o1Month);
-        });
+        map.forEach((key, value) -> archiveDTOs.add(ArchiveDTO.builder().Time(key).archives(value).build()));
         return new PageResultDTO<>(archiveDTOs, asyncCount.get());
     }
 
@@ -245,10 +227,22 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
             article.setCategoryId(category.getId());
         }
         article.setUserId(UserUtil.getUserDetailsDTO().getUserInfoId());
+        if(article.getId() != null){
+            Article tmp = articleMapper.selectById(article.getId());
+            // 查看是否有归档id
+            if (Objects.isNull(tmp.getArchiveId())) {
+                article.setArchiveId(UUID.randomUUID().toString());
+            }else{
+                article.setArchiveId(tmp.getArchiveId());
+            }
+        }else{
+            article.setArchiveId(UUID.randomUUID().toString());
+        }
         this.saveOrUpdate(article);
         saveArticleTag(articleVO, article.getId());
-        if (article.getStatus().equals(1)) {
+        if (article.getStatus().equals(ARTICLE_STATUS_PUBLIC)) {
             rabbitTemplate.convertAndSend(SUBSCRIBE_EXCHANGE, "*", new Message(JSON.toJSONBytes(article.getId()), new MessageProperties()));
+            archiveService.saveArticleArchive(article);
         }
     }
 
@@ -271,11 +265,23 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
                         .build())
                 .collect(Collectors.toList());
         this.updateBatchById(articles);
+        // 更新文章归档信息
+        articles = articleMapper.selectBatchIds(deleteVO.getIds());
+        List<String> archiveIds = articles.stream()
+                .map(Article::getArchiveId)
+                .collect(Collectors.toList());
+        archiveService.updateArchiveDelete(archiveIds, deleteVO.getIsDelete());
+
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteArticles(List<Integer> articleIds) {
+        List<Article> articles = articleMapper.selectBatchIds(articleIds);
+        List<String> archiveIds = articles.stream()
+                .map(Article::getArchiveId)
+                .collect(Collectors.toList());
+        archiveService.deleteArchives(archiveIds);
         articleTagMapper.delete(new LambdaQueryWrapper<ArticleTag>()
                 .in(ArticleTag::getArticleId, articleIds));
         articleMapper.deleteBatchIds(articleIds);

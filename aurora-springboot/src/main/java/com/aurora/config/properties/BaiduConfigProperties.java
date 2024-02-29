@@ -15,4 +15,8 @@ public class BaiduConfigProperties {
     private String clientId;
 
     private String clientSecret;
+
+    private String appId;
+
+    private String securityKey;
 }

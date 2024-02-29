@@ -58,29 +58,103 @@ export const useAppStore = defineStore('appStore', {
       let element = document.querySelector('#app .app-wrapper .app-container') as HTMLElement
       if (element) {
         let marginValue = window.getComputedStyle(element).getPropertyValue('margin')
-        if(marginValue == '0px'){
+        if (marginValue == '0px') {
           // 修改全局margin值
           element.style.margin = '0 auto'
-          let maxScreen  = document.querySelector(' .lg\\:max-w-screen-2xl') as HTMLElement
-          if (maxScreen) {
-            // 修改屏幕最大宽度
-            maxScreen.style.maxWidth = '1536px'
+          // 修改背景颜色
+          element.style.backgroundColor = 'var(--background-primary-note)'
+        }
+        let maxScreen = document.querySelector(' .lg\\:max-w-screen-2xl') as HTMLElement
+        if (maxScreen) {
+          // 修改屏幕最大宽度
+          maxScreen.style.maxWidth = '1536px'
+        }
+        let padding = document.querySelector(' .lg\\:px-8') as HTMLElement
+        if (padding) {
+          // 修改padding值
+          padding.style.paddingLeft = '2rem'
+          padding.style.paddingRight = '2rem'
+        }
+        let position = document.querySelector('.header-container') as HTMLElement
+        if (position) {
+          // 修改页面布局
+          position.style.position = 'relative'
+          position.style.width = '100%'
+          position.style.left = '0'
+        }
+        let playBox = document.querySelector('.play_box') as HTMLElement
+        if (playBox) {
+          // 修改页面布局
+          playBox.style.minWidth = '300px'
+          //隐藏其余标签
+          let progress = document.querySelector('.progress') as HTMLElement
+          if (progress) {
+            progress.style.display = ''
           }
-          let padding = document.querySelector(' .lg\\:px-8') as HTMLElement
-          if (padding) {
-            // 修改padding值
-            padding.style.paddingLeft = '2rem'
-            padding.style.paddingRight = '2rem'
+          let timeShow = document.querySelector('.time_show') as HTMLElement
+          if (timeShow) {
+            timeShow.style.display = ''
           }
-          let position = document.querySelector('.header-container') as HTMLElement
-          if (position) {
-            // 修改页面布局
-            position.style.position = 'relative'
-            position.style.width = '100%'
-            position.style.left = '0'
+          let tool = document.querySelector('.tool') as HTMLElement
+          if (tool) {
+            tool.style.display = ''
+          }
+          let musicInfo = document.querySelector('.music_info') as HTMLElement
+          if (musicInfo) {
+            musicInfo.style.display = ''
           }
         }
+
       }
+    },
+    loadNoteStyle() {
+      let element = document.querySelector('#app .app-wrapper .app-container') as HTMLElement
+      if (element) {
+        // 修改全局margin值
+        element.style.margin = '0'
+        // 修改背景颜色
+        element.style.backgroundColor = 'var(--background-primary-note)'
+      }
+      let maxScreen = document.querySelector(' .lg\\:max-w-screen-2xl') as HTMLElement
+      if (maxScreen) {
+        // 修改屏幕最大宽度
+        maxScreen.style.maxWidth = '100%'
+      }
+      let padding = document.querySelector(' .lg\\:px-8') as HTMLElement
+      if (padding) {
+        // 修改padding值
+        padding.style.padding = '0'
+      }
+      let position = document.querySelector('.header-container') as HTMLElement
+      if (position) {
+        // 修改页面布局
+        position.style.position = 'absolute'
+        position.style.width = '80%'
+        position.style.left = '9%'
+      }
+      let playBox = document.querySelector('.play_box') as HTMLElement
+      if (playBox) {
+        // 修改页面布局
+        playBox.style.minWidth = '50px'
+        //隐藏其余标签
+        let progress = document.querySelector('.progress') as HTMLElement
+        if (progress) {
+          progress.style.display = 'none'
+        }
+        let timeShow = document.querySelector('.time_show') as HTMLElement
+        if (timeShow) {
+          timeShow.style.display = 'none'
+        }
+        let tool = document.querySelector('.tool') as HTMLElement
+        if (tool) {
+          tool.style.display = 'none'
+        }
+        let musicInfo = document.querySelector('.music_info') as HTMLElement
+        if (musicInfo) {
+          musicInfo.style.display = 'none'
+        }
+      }
+
     },
     changeLocale(locale: string) {
       cookies.set('locale', locale, { expires: 7 })

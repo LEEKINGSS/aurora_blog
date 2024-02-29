@@ -11,13 +11,15 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { Logo, Navigation, Controls } from '../index'
+import { Music } from '@/components/Music'
 
 export default defineComponent({
   name: 'Header',
   components: {
     Logo,
     Navigation,
-    Controls
+    Controls,
+    Music
   },
   props: {
     msg: String

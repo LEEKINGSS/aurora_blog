@@ -7,10 +7,17 @@
 
 .theme-light {
   --background-primary: #f1f3f9;
+  --background-primary-note: #f1f3f9;
   --background-primary-alt: #fafafa;
   --background-secondary: #ffffff;
   --background-secondary-alt: #2e3236;
+  --background-image: rgba(239, 241, 232, 0.65);
   --background-trans: rgba(0, 0, 0, 0.15);
+  --background-note-tag: rgba(239, 241, 232, 0.56);
+  --boder-note-tag: rgba(215, 219, 208, 0.86);
+  --boder-note-hover: rgba(0, 0, 0, 0.78);
+  --text-note-header: rgba(255,255,255,var(--tw-text-opacity));
+  --text-note-title: #4d0105;
   --text-bright: #000000;
   --text-normal: #333333;
   --text-accent: #e93796;
@@ -80,13 +87,20 @@
 
 .theme-dark {
   --background-primary: #1a1a1a;
+  --background-primary-note: #100e17;
   --background-primary-alt: #0d0b12;
   --background-secondary: #212121;
   --background-secondary-alt: #0d0b12;
+  --background-image: rgba(0, 0, 0, 0.65);
   --background-trans: rgba(255, 255, 255, 0.15);
+  --background-note-tag: rgba(16, 14, 23, 0.56);
+  --boder-note-tag: rgba(40, 36, 47, 0.86);
+  --boder-note-hover: rgba(255, 255, 255, 0.78);
+  --text-note-title: #b2fefa;
   --skeleton-bg: #2e2e2e;
   --skeleton-hl: #363636;
   --text-bright: #fff;
+  --night-font-color: #ddd;
   --text-normal: #bebebe;
   --text-accent: #0fb6d6;
   --text-sub-accent: #f4569d;

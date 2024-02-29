@@ -10,6 +10,7 @@ import com.aurora.mapper.*;
 import com.aurora.model.dto.*;
 import com.aurora.model.vo.*;
 import com.aurora.service.*;
+import com.aurora.strategy.BaiduTranslateStrategy;
 import com.aurora.strategy.context.SearchStrategyContext;
 import com.aurora.strategy.context.UploadStrategyContext;
 import com.aurora.util.BeanCopyUtil;
@@ -18,6 +19,9 @@ import com.aurora.util.UserUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.models.auth.In;
 import lombok.SneakyThrows;
 import org.springframework.amqp.core.Message;
@@ -33,8 +37,7 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
-import static com.aurora.constant.ArticleConstant.ARTICLE_STATUS_PRIVATE;
-import static com.aurora.constant.ArticleConstant.WORDS_PER_MINUTE;
+import static com.aurora.constant.ArticleConstant.*;
 import static com.aurora.constant.RabbitMQConstant.SUBSCRIBE_EXCHANGE;
 import static com.aurora.constant.RedisConstant.*;
 import static com.aurora.enums.ArticleStatusEnum.DRAFT;
@@ -84,6 +87,9 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
     @Autowired
     private NoteTagMapper noteTagMapper;
 
+    @Autowired
+    private BaiduTranslateStrategy baiduTranslateStrategy;
+
     /**
      * 笔记合集mapper
      */
@@ -95,6 +101,9 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
      */
     @Autowired
     private NoteTagService noteTagService;
+
+    @Autowired
+    private ArchiveService archiveService;
 
     @SneakyThrows
     @Override
@@ -127,7 +136,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
     public PageResultDTO<NoteCardDTO> listNotesByCollectionId(Integer collectionId) {
         LambdaQueryWrapper<Note> queryWrapper = new LambdaQueryWrapper<Note>().eq(Note::getCollectionId, collectionId);
         CompletableFuture<Integer> asyncCount = CompletableFuture.supplyAsync(() -> noteMapper.selectCount(queryWrapper));
-        List<NoteCardDTO> notes = noteMapper.getNotesByCollectionId(PageUtil.getLimitCurrent(), PageUtil.getSize(), collectionId);
+        List<NoteCardDTO> notes = noteMapper.getNotesByCollectionId(collectionId);
         return new PageResultDTO<>(notes, asyncCount.get());
     }
 
@@ -205,44 +214,6 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 
     @SneakyThrows
     @Override
-    public PageResultDTO<ArchiveDTO> listArchives() {
-        LambdaQueryWrapper<Article> queryWrapper = new LambdaQueryWrapper<Article>().eq(Article::getIsDelete, 0).eq(Article::getStatus, 1);
-        CompletableFuture<Integer> asyncCount = CompletableFuture.supplyAsync(() -> articleMapper.selectCount(queryWrapper));
-        List<ArticleCardDTO> articles = articleMapper.listArchives(PageUtil.getLimitCurrent(), PageUtil.getSize());
-        HashMap<String, List<ArticleCardDTO>> map = new HashMap<>();
-        for (ArticleCardDTO article : articles) {
-            LocalDateTime createTime = article.getCreateTime();
-            int month = createTime.getMonth().getValue();
-            int year = createTime.getYear();
-            String key = year + "-" + month;
-            if (Objects.isNull(map.get(key))) {
-                List<ArticleCardDTO> articleCardDTOS = new ArrayList<>();
-                articleCardDTOS.add(article);
-                map.put(key, articleCardDTOS);
-            } else {
-                map.get(key).add(article);
-            }
-        }
-        List<ArchiveDTO> archiveDTOs = new ArrayList<>();
-        map.forEach((key, value) -> archiveDTOs.add(ArchiveDTO.builder().Time(key).articles(value).build()));
-        archiveDTOs.sort((o1, o2) -> {
-            String[] o1s = o1.getTime().split("-");
-            String[] o2s = o2.getTime().split("-");
-            int o1Year = Integer.parseInt(o1s[0]);
-            int o1Month = Integer.parseInt(o1s[1]);
-            int o2Year = Integer.parseInt(o2s[0]);
-            int o2Month = Integer.parseInt(o2s[1]);
-            if (o1Year > o2Year) {
-                return -1;
-            } else if (o1Year < o2Year) {
-                return 1;
-            } else return Integer.compare(o2Month, o1Month);
-        });
-        return new PageResultDTO<>(archiveDTOs, asyncCount.get());
-    }
-
-    @SneakyThrows
-    @Override
     public PageResultDTO<NoteAdminDTO> listNotesAdmin(ConditionVO conditionVO) {
         // 异步查询笔记总数
         CompletableFuture<Integer> asyncCount = CompletableFuture.supplyAsync(() -> noteMapper.countNoteAdmins(conditionVO));
@@ -279,10 +250,35 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
         }
         note.setNoteTime(getReadTime(count));
         note.setNoteCount(count);
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode jsonNode;
+        if (!Objects.equals(note.getNoteQuotes(), "") && note.getNoteQuotes() != null) {
+            try {
+                jsonNode = objectMapper.readTree(baiduTranslateStrategy.getTransResult(note.getNoteQuotes(), "auto", "en"));
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+            String translation = jsonNode.get("trans_result").get(0).get("dst").asText();
+            if (Objects.nonNull(note.getNoteQuotes())) {
+                note.setNoteQuotes(note.getNoteQuotes() + "|" + translation);
+            }
+        }
+        if(note.getId() != null){
+            Note tmp = noteMapper.selectById(note.getId());
+            // 查看是否有归档id
+            if (Objects.isNull(tmp.getArchiveId())) {
+                note.setArchiveId(UUID.randomUUID().toString());
+            }else{
+                note.setArchiveId(tmp.getArchiveId());
+            }
+        }else{
+            note.setArchiveId(UUID.randomUUID().toString());
+        }
         this.saveOrUpdate(note);
         saveNoteTag(noteVO, note.getId());
-        if (note.getStatus().equals(1)) {
+        if (note.getStatus().equals(ARTICLE_STATUS_PUBLIC)) {
             rabbitTemplate.convertAndSend(SUBSCRIBE_EXCHANGE, "*", new Message(JSON.toJSONBytes(note.getId()), new MessageProperties()));
+            archiveService.saveNoteArchive(note);
         }
     }
 
@@ -369,6 +365,9 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
         this.updateById(note);
     }
 
+    /**
+     * 逻辑删除笔记
+     */
     @Override
     public void updateNoteDelete(DeleteVO deleteVO) {
         List<Note> notes = deleteVO.getIds().stream()
@@ -378,11 +377,25 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
                         .build())
                 .collect(Collectors.toList());
         this.updateBatchById(notes);
+        // 更新笔记归档信息
+        notes = noteMapper.selectBatchIds(deleteVO.getIds());
+        List<String> archiveIds = notes.stream()
+                .map(Note::getArchiveId)
+                .collect(Collectors.toList());
+        archiveService.updateArchiveDelete(archiveIds, deleteVO.getIsDelete());
     }
 
+    /**
+     * 物理删除笔记
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteNotes(List<Integer> noteIds) {
+        List<Note> notes = noteMapper.selectBatchIds(noteIds);
+        List<String> archiveIds = notes.stream()
+                .map(Note::getArchiveId)
+                .collect(Collectors.toList());
+        archiveService.deleteArchives(archiveIds);
         noteTagMapper.delete(new LambdaQueryWrapper<NoteTag>()
                 .in(NoteTag::getNoteId, noteIds));
         noteMapper.deleteBatchIds(noteIds);
@@ -428,56 +441,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
     }
 
     public void updateNoteViewsCount(Integer noteId) {
-        redisService.zIncr(ARTICLE_VIEWS_COUNT, noteId, 1D);
-    }
-
-    private Category saveArticleCategory(ArticleVO articleVO) {
-        Category category = categoryMapper.selectOne(new LambdaQueryWrapper<Category>()
-                .eq(Category::getCategoryName, articleVO.getCategoryName()));
-        if (Objects.isNull(category) && !articleVO.getStatus().equals(DRAFT.getStatus())) {
-            category = Category.builder()
-                    .categoryName(articleVO.getCategoryName())
-                    .build();
-            categoryMapper.insert(category);
-        }
-        return category;
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public void saveArticleTag(ArticleVO articleVO, Integer articleId) {
-        if (Objects.nonNull(articleVO.getId())) {
-            articleTagMapper.delete(new LambdaQueryWrapper<ArticleTag>()
-                    .eq(ArticleTag::getArticleId, articleVO.getId()));
-        }
-        List<String> tagNames = articleVO.getTagNames();
-        if (CollectionUtils.isNotEmpty(tagNames)) {
-            List<Tag> existTags = tagService.list(new LambdaQueryWrapper<Tag>()
-                    .in(Tag::getTagName, tagNames));
-            List<String> existTagNames = existTags.stream()
-                    .map(Tag::getTagName)
-                    .collect(Collectors.toList());
-            List<Integer> existTagIds = existTags.stream()
-                    .map(Tag::getId)
-                    .collect(Collectors.toList());
-            tagNames.removeAll(existTagNames);
-            if (CollectionUtils.isNotEmpty(tagNames)) {
-                List<Tag> tags = tagNames.stream().map(item -> Tag.builder()
-                                .tagName(item)
-                                .build())
-                        .collect(Collectors.toList());
-                tagService.saveBatch(tags);
-                List<Integer> tagIds = tags.stream()
-                        .map(Tag::getId)
-                        .collect(Collectors.toList());
-                existTagIds.addAll(tagIds);
-            }
-            List<ArticleTag> articleTags = existTagIds.stream().map(item -> ArticleTag.builder()
-                            .articleId(articleId)
-                            .tagId(item)
-                            .build())
-                    .collect(Collectors.toList());
-            articleTagService.saveBatch(articleTags);
-        }
+        redisService.zIncr(NOTE_VIEWS_COUNT, noteId, 1D);
     }
 
 }

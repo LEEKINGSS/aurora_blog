@@ -14,10 +14,8 @@ import java.util.List;
 @Repository
 public interface NoteMapper extends BaseMapper<Note> {
 
-//    List<ArticleCardDTO> listTopAndFeaturedArticles();
-//
     List<NoteCardDTO> listNotes(@Param("current") Long current, @Param("size") Long size);
-    List<NoteCardDTO> getNotesByCollectionId(@Param("current") Long current, @Param("size") Long size, @Param("collectionId") Integer collectionId);
+    List<NoteCardDTO> getNotesByCollectionId(@Param("collectionId") Integer collectionId);
 
     NoteDTO getNoteById(@Param("noteId") Integer noteId);
 
@@ -29,14 +27,12 @@ public interface NoteMapper extends BaseMapper<Note> {
 
     NoteCardDTO getLastNote();
     List<NoteCardDTO> listNotesByTagId(@Param("tagId") Integer tagId);
-//
-//    List<ArticleCardDTO> listArchives(@Param("current") Long current, @Param("size") Long size);
-//
+
     Integer countNoteAdmins(@Param("conditionVO") ConditionVO conditionVO);
 
     List<NoteAdminDTO> listNotesAdmin(@Param("current") Long current, @Param("size") Long size, @Param("conditionVO") ConditionVO conditionVO);
-//
-//    List<ArticleStatisticsDTO> listArticleStatistics();
+
+    List<ArticleStatisticsDTO> listNoteStatistics();
 
 }
 

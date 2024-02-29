@@ -18,7 +18,7 @@
               </h2>
             </div>
           </li>
-          <li class="timeline-item" v-for="article in archive.articles" :key="article.id">
+          <li class="timeline-item" v-for="article in archive.archives" :key="article.articleId">
             <div class="timeline-info">
               <span>
                 {{ t(`settings.months[${new Date(article.createTime).getMonth()}]`) }}
@@ -26,12 +26,20 @@
               </span>
             </div>
             <div class="timeline-marker"></div>
-            <div class="timeline-content">
-              <router-link :to="'/articles/' + article.id">
-                <h3 class="timeline-title">{{ article.articleTitle }}</h3>
+            <div class="timeline-content" v-if="article.type === 0">
+              <router-link :to="'/articles/' + article.articleId">
+                <h3 class="timeline-title">{{ article.title }}</h3>
               </router-link>
               <p>
-                {{ article.articleContent }}
+                {{ article.content }}
+              </p>
+            </div>
+            <div class="timeline-content" v-if="article.type === 1">
+              <router-link :to="'/notes/' + article.articleId">
+                <h3 class="timeline-title">{{ article.title }}</h3>
+              </router-link>
+              <p>
+                {{ article.content }}
               </p>
             </div>
           </li>
@@ -49,13 +57,14 @@
 <script lang="ts">
 import { useArticleStore } from '@/stores/article'
 import { useCommonStore } from '@/stores/common'
-import { defineComponent, onMounted, onUnmounted, reactive, toRef } from 'vue'
+import { defineComponent, onMounted, onUnmounted, reactive, toRef, toRefs } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Breadcrumb from '@/components/Breadcrumb.vue'
 import Paginator from '@/components/Paginator.vue'
 import api from '@/api/api'
 import markdownToHtml from '@/utils/markdown'
 import { useAppStore } from '@/stores/app'
+import { useArchiveStore } from '@/stores/archive'
 
 export default defineComponent({
   name: 'Archives',
@@ -65,6 +74,7 @@ export default defineComponent({
     const articleStore = useArticleStore()
     const { t } = useI18n()
     const appStore = useAppStore()
+    const archiveStore = useArchiveStore()
     const pagination = reactive({
       current: 1,
       total: 0,
@@ -86,15 +96,16 @@ export default defineComponent({
           size: pagination.size
         })
         .then(({ data }) => {
+          console.log(data)
           data.data.records.forEach((item: any) => {
-            item.articles.forEach((article: any) => {
-              article.articleContent = markdownToHtml(article.articleContent)
+            item.archives.forEach((archive: any) => {
+              archive.content = markdownToHtml(archive.content)
                 .replace(/<\/?[^>]*>/g, '')
                 .replace(/[|]*\n/, '')
                 .replace(/&npsp;/gi, '')
             })
           })
-          articleStore.archives = data.data.records
+          archiveStore.archives = data.data.records
           pagination.total = data.data.count
         })
     }
@@ -111,7 +122,7 @@ export default defineComponent({
     return {
       pageChangeHanlder,
       pagination,
-      archives: toRef(articleStore.$state, 'archives'),
+      archives: toRef(archiveStore.$state, 'archives'),
       t
     }
   }
@@ -141,6 +152,7 @@ export default defineComponent({
 .timeline-item {
   padding-left: 40px;
   position: relative;
+
   &:last-child {
     padding-bottom: 0;
   }
@@ -162,6 +174,7 @@ export default defineComponent({
   bottom: 0;
   left: 0;
   width: 15px;
+
   &:before {
     background: var(--text-accent);
     border: 3px solid transparent;
@@ -175,6 +188,7 @@ export default defineComponent({
     width: 15px;
     transition: background 0.3s ease-in-out, border 0.3s ease-in-out;
   }
+
   &:after {
     content: '';
     width: 3px;
@@ -185,10 +199,12 @@ export default defineComponent({
     bottom: 0;
     left: 6px;
   }
+
   .timeline-item:last-child &:after {
     content: none;
   }
 }
+
 .timeline-item:not(.period):hover .timeline-marker:before {
   background: transparent;
   border: 3px solid var(--text-accent);
@@ -196,6 +212,7 @@ export default defineComponent({
 
 .timeline-content {
   padding-bottom: 40px;
+
   p {
     overflow: hidden;
     text-overflow: ellipsis;
@@ -210,6 +227,7 @@ export default defineComponent({
 .timeline-title {
   @apply pb-2 mb-4 text-ob-bright relative text-2xl;
   font-weight: 600;
+
   &:after {
     @apply absolute bottom-0 h-1 w-24 rounded-full;
     content: '';
@@ -220,9 +238,11 @@ export default defineComponent({
 
 .period {
   padding: 0;
+
   .timeline-info {
     display: none;
   }
+
   .timeline-marker {
     &:before {
       background: transparent;
@@ -237,17 +257,21 @@ export default defineComponent({
       border-top: 3px solid var(--text-normal);
       border-bottom: 3px solid var(--text-normal);
     }
+
     &:after {
       content: '';
       height: 32px;
       top: auto;
     }
   }
+
   .timeline-content {
     padding: 40px 0 70px;
   }
+
   .timeline-title {
     margin: 0;
+
     &:after {
       content: none;
     }
@@ -320,6 +344,7 @@ export default defineComponent({
       float: right;
       text-align: left;
       padding-left: 30px;
+
       .timeline-title {
         &:after {
           left: 0;
@@ -336,6 +361,7 @@ export default defineComponent({
       float: left;
       text-align: right;
       padding-right: 30px;
+
       .timeline-title {
         &:after {
           right: 0;

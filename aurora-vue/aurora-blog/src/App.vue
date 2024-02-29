@@ -36,7 +36,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onBeforeMount, onUnmounted, ref } from 'vue'
+import { computed, defineComponent, onBeforeMount, onMounted, onUnmounted, ref } from 'vue'
 import { useAppStore } from '@/stores/app'
 import { useCommonStore } from '@/stores/common'
 import { useMetaStore } from '@/stores/meta'
@@ -49,6 +49,7 @@ import UserCenter from '@/components/UserCenter.vue'
 import api from './api/api'
 import {i18n} from "@/locales";
 import cookies from "js-cookie";
+import { useRoute } from 'vue-router'
 export default defineComponent({
   name: 'App',
   computed: {
@@ -70,6 +71,7 @@ export default defineComponent({
     const metaStore = useMetaStore() // 获取博客名称
     const MOBILE_WITH = 996 // pc端的最小宽度
     const appWrapperClass = 'app-wrapper'
+    const route = useRoute()
     const loadingBarClass = ref({
       'nprogress-custom-parent': false
     })
@@ -77,6 +79,7 @@ export default defineComponent({
     const isMobile = computed(() => {
       return commonStore.isMobile
     })
+
     onBeforeMount(() => {
       initialApp()
     })
@@ -167,10 +170,30 @@ export default defineComponent({
       isMobile: computed(() => commonStore.isMobile),
       cssVariables: computed(() => {
         if (appStore.themeConfig.theme === 'theme-dark') {
+          if(route.fullPath == '/note'){
+            return `
+            --text-accent: ${appStore.themeConfig.gradient.color_1};
+            --text-sub-accent: ${appStore.themeConfig.gradient.color_3};
+            --main-gradient: ${appStore.themeConfig.header_gradient_css};
+            margin: 0;
+            padding: 0;
+            max-width: 100%;
+          `
+          }
           return `
             --text-accent: ${appStore.themeConfig.gradient.color_1};
             --text-sub-accent: ${appStore.themeConfig.gradient.color_3};
             --main-gradient: ${appStore.themeConfig.header_gradient_css};
+          `
+        }
+        if(route.fullPath == '/note'){
+          return `
+            --text-accent: ${appStore.themeConfig.gradient.color_3};
+            --text-sub-accent: ${appStore.themeConfig.gradient.color_2};
+            --main-gradient: ${appStore.themeConfig.header_gradient_css};
+            margin: 0;
+            padding: 0;
+            max-width: 100%;
           `
         }
         return `

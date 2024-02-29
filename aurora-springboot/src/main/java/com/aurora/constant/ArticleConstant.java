@@ -18,4 +18,13 @@ public interface ArticleConstant {
      * 每分钟阅读文字个数
      */
     public static final Integer WORDS_PER_MINUTE = 200;
+
+    /**
+     * 归档类型
+     * 0.文章 1.笔记
+     */
+    public static final Integer ARCHIVE_TYPE_ARTICLE = 0;
+
+    public static final Integer ARCHIVE_TYPE_NOTE = 1;
+
 }

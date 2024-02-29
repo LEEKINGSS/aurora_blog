@@ -105,6 +105,25 @@
     <el-row :gutter="20" style="margin-top: 1.25rem">
       <el-col :span="16">
         <el-card>
+          <div class="e-title">笔记浏览量排行</div>
+          <div style="height: 350px">
+            <v-chart :options="noteRank" v-loading="loading" />
+          </div>
+        </el-card>
+      </el-col>
+      <el-col :span="8">
+        <el-card>
+          <div class="e-title">笔记合集统计</div>
+          <div style="height: 350px">
+            <v-chart :options="collection" v-loading="loading" />
+          </div>
+        </el-card>
+      </el-col>
+    </el-row>
+
+    <el-row :gutter="20" style="margin-top: 1.25rem">
+      <el-col :span="16">
+        <el-card>
           <div class="e-title">用户地域分布</div>
           <div style="height: 350px" v-loading="loading">
             <div class="area-wrapper">
@@ -218,6 +237,34 @@ export default {
           }
         ]
       },
+      noteRank: {
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'cross'
+          }
+        },
+        color: ['#58AFFF'],
+        grid: {
+          left: '0%',
+          right: '0%',
+          bottom: '0%',
+          top: '10%',
+          containLabel: true
+        },
+        xAxis: {
+          data: []
+        },
+        yAxis: {},
+        series: [
+          {
+            name: ['浏览量'],
+            type: 'bar',
+            data: []
+          }
+        ]
+      },
+
       category: {
         color: ['#7EC0EE', '#FF9F7F', '#FFD700', '#C9C9C9', '#E066FF', '#36dc59', '#C0FF3E'],
         legend: {
@@ -236,6 +283,25 @@ export default {
           }
         ]
       },
+      collection: {
+        color: ['#7EC0EE', '#FF9F7F', '#FFD700', '#C9C9C9', '#E066FF', '#36dc59', '#C0FF3E'],
+        legend: {
+          data: [],
+          bottom: 'bottom'
+        },
+        tooltip: {
+          trigger: 'item'
+        },
+        series: [
+          {
+            name: '笔记合集',
+            type: 'pie',
+            roseType: 'radius',
+            data: []
+          }
+        ]
+      },
+
       userAreaMap: {
         tooltip: {
           formatter: function(e) {
@@ -311,6 +377,7 @@ export default {
         this.messageCount = data.data.messageCount
         this.userCount = data.data.userCount
         this.articleCount = data.data.articleCount
+        this.noteCount = data.data.noteCount
         this.articleStatisticsDTOs = data.data.articleStatisticsDTOs
         if (data.data.uniqueViewDTOs != null) {
           data.data.uniqueViewDTOs.forEach((item) => {
@@ -329,10 +396,27 @@ export default {
           })
         }
 
+        if(data.data.collectionDTOs != null) {
+          data.data.collectionDTOs.forEach((item) => {
+            this.collection.series[0].data.push({
+              value: item.noteCount,
+              name: item.collectionName
+            })
+            this.collection.legend.data.push(item.collectionName)
+          })
+        }
+
         if (data.data.articleRankDTOs != null) {
           data.data.articleRankDTOs.forEach((item) => {
             this.ariticleRank.series[0].data.push(item.viewsCount)
             this.ariticleRank.xAxis.data.push(item.articleTitle)
+          })
+        }
+
+        if (data.data.noteRankDTOs != null) {
+          data.data.noteRankDTOs.forEach((item) => {
+            this.noteRank.series[0].data.push(item.viewsCount)
+            this.noteRank.xAxis.data.push(item.noteTitle)
           })
         }
 

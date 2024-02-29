@@ -1,6 +1,6 @@
 <template>
   <div class="flex items-start self-stretch relative" @click="handleClick">
-    <div class="flex flex-col relative py-4 z-10 text-white font-medium ob-drop-shadow cursor-pointer" @click="">
+    <div class="flex flex-col relative py-4 z-10 text-white font-medium ob-drop-shadow cursor-pointer index-css" @click="">
       <span class="flex text-3xl" v-if="websiteConfig.name">
         {{ websiteConfig.name }}
       </span>
@@ -53,5 +53,8 @@ export default defineComponent({
   left: -60px;
   opacity: 0.05;
   @apply absolute mr-2 rounded-full;
+}
+.index-css{
+  color:var(--text-note-header);
 }
 </style>
