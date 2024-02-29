@@ -45,7 +45,7 @@
       </li>
     </ul>
     <div class="flex flex-row player">
-      <Music v-if="!isMobile"/>
+      <Music v-if="!isMobile && language == 'cn'"/>
     </div>
   </nav>
 </template>
@@ -61,6 +61,7 @@ import api from '@/api/api'
 import { useAppStore } from '@/stores/app'
 import { Music } from '@/components/Music'
 import { useCommonStore } from '@/stores/common'
+import { i18n } from '@/locales'
 
 
 export default defineComponent({
@@ -71,6 +72,7 @@ export default defineComponent({
     const router = useRouter()
     const appStore = useAppStore()
     const commonStore = useCommonStore() // 是否为手机端
+    const language = i18n.global.locale
     const pushPage = (path: string): void => {
       if (!path) return
       if (isExternal(path)) {
@@ -99,7 +101,8 @@ export default defineComponent({
       pushPage,
       openPhotoAlbum,
       te,
-      t
+      t,
+      language
     }
   }
 })

@@ -88,6 +88,7 @@ export default defineComponent({
                 .replace(/[|]*\n/, '')
                 .replace(/&npsp;/gi, '')
             })
+            prePageChangeHanlder(data)
             noteStore.allNotes = data.data.records
             pagination.total = data.data.count
             reactiveData.haveNotes = true
@@ -111,6 +112,7 @@ export default defineComponent({
                 .replace(/[|]*\n/, '')
                 .replace(/&npsp;/gi, '')
             })
+            prePageChangeHanlder(data)
             noteStore.allNotes = data.data.records
             pagination.total = data.data.count
             reactiveData.haveNotes = true
