@@ -42,7 +42,7 @@
 </template>
 
 <script setup lang="js">
-import { defineComponent, nextTick, onMounted, ref } from 'vue'
+import { defineComponent, nextTick, ref } from 'vue'
 
 export default defineComponent({
   name: 'Music',
@@ -261,9 +261,6 @@ export default defineComponent({
       } else {
         this.index = this.music.length - 1
       }
-      // musicOBJ.src = this.music[this.index]
-      // musicBOXbc.src = this.head[this.index]
-      // musicInfoShow.innerText = this.name[this.index]
       this.nowtime = 0
       this.musicStop()
     },
@@ -274,9 +271,6 @@ export default defineComponent({
       } else {
         this.index = 0
       }
-      // musicOBJ.src = this.music[this.index]
-      // musicBOXbc.src = this.head[this.index]
-      // musicInfoShow.innerText = this.name[this.index]
       this.nowtime = 0
       this.musicStop()
     }

@@ -6,6 +6,7 @@ import com.aurora.entity.Note;
 import com.aurora.mapper.ArchiveMapper;
 import com.aurora.service.ArchiveService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +20,7 @@ import static com.aurora.constant.ArticleConstant.ARCHIVE_TYPE_NOTE;
 @Service
 public class ArchiveServiceImpl extends ServiceImpl<ArchiveMapper, Archive> implements ArchiveService {
 
+    @Autowired
     private ArchiveMapper archiveMapper;
 
     /**
