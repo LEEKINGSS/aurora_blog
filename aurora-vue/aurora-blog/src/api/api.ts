@@ -40,6 +40,9 @@ export default {
   getNotes: (params: any) => {
     return axios.get('/api/notes/all', { params: params })
   },
+  getMusics: () => {
+    return axios.get('/api/musics/all')
+  },
   getArticlesByCategoryId: (params: any) => {
     return axios.get('/api/articles/categoryId', { params: params })
   },

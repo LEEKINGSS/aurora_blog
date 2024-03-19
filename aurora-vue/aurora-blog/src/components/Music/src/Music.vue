@@ -28,10 +28,10 @@
       <div class="time_show">00:00 / 00:00</div>
       <!-- 音量组件 -->
       <div class="tool">
-        <div class="volume iconfont icon-volumeMiddle" @mouseenter="volumeSet" @click="volumeBtn"
+        <div class="volume iconfont icon-volumeMiddle" @mouseenter="volumeSet" @dblclick="volumeBtn"
              @mouseleave="volumeLeave">
           <div class="volume_range">
-            <input type="range" class="range" @focus="volumePro">
+            <input type="range" class="range" @change="volumePros">
           </div>
         </div>
       </div>
@@ -41,36 +41,28 @@
   </div>
 </template>
 
-<script setup lang="js">
+<script lang="ts">
 import { defineComponent, nextTick, ref } from 'vue'
+import api from '@/api/api'
 
 export default defineComponent({
   name: 'Music',
   data() {
     return {
-      f1: false,
-      f2: false,
-      i1: 0,
-      time: null,
-      time2: null,
-      time3: null,
-      time4: null,
-      nowtime: 0,
-      currtime: 0,
-      head: ['https://liking.oss-cn-wulanchabu.aliyuncs.com/aurora/music/head/44434fff4ae331f5531ac64bfd970ed.jpg',
-        'https://liking.oss-cn-wulanchabu.aliyuncs.com/aurora/music/head/eac6f07b1e0fb2912e9116ec2d4cf06.jpg',
-        'https://liking.oss-cn-wulanchabu.aliyuncs.com/aurora/music/head/4d0320b9d24f499acf1d635131dae92.png'
-      ],
-      music: ['https://liking.oss-cn-wulanchabu.aliyuncs.com/aurora/music/music/Call%20your%20name%20Gv-%E6%B3%BD%E9%87%8E%E5%BC%98%E4%B9%8B.320.mp3',
-        'https://liking.oss-cn-wulanchabu.aliyuncs.com/aurora/music/music/Dave%20-%20%E6%AF%8F%E5%BD%93%E6%88%91.mp3',
-        'https://liking.oss-cn-wulanchabu.aliyuncs.com/aurora/music/music/UnicornPhantom%20-%20%E7%8B%AC%E8%A7%92.mp3'
-      ],
-      name: ['Call your name',
-        '每当我',
-        '独角'
-      ],
-      x: 0,
-      index: 0
+      f1: false as boolean,
+      f2: false as boolean,
+      i1: 0 as number,
+      time: null as any,
+      time2: null as any,
+      time3: null as any,
+      time4: null as any,
+      nowtime: 0 as number,
+      currtime: 0 as number,
+      head: [] as string[],
+      music: [] as string[],
+      name: [] as string[],
+      x: 0 as number,
+      index: 0 as number
     }
   },
   mounted() {
@@ -91,24 +83,36 @@ export default defineComponent({
         this.f1 = false
       }
     }, 1000)
+    this.fetchMusic()
   },
   methods: {
+    fetchMusic() {
+      // 获取音乐
+      api.getMusics().then(({ data }) => {
+        console.log(data)
+        for (let i = 0; i < data.data.length; i++) {
+          this.head.push(data.data[i].head)
+          this.music.push(data.data[i].music)
+          this.name.push(data.data[i].name)
+        }
+      })
+    },
     setupLocalVar() {
       // 需要使用到的元素对象
-      let stateSet = document.querySelector('.state_set')
-      let musicHead = document.querySelector('.head')
-      let musicOBJ = document.querySelector('audio')
-      let proLine = document.querySelector('.pros')
-      let timeshow = document.querySelector('.time_show')
-      let musicLineMoveFa = document.querySelector('.progress')
-      let musicLineMove = document.querySelector('.pros')
-      let volumeBtn = document.querySelector('.volume')
-      let volumeBar = document.querySelector('.volume_range')
-      let volumePro = document.querySelector('.range')
-      let musicLast = document.querySelector('.last')
-      let musicNext = document.querySelector('.next')
-      let musicBOXbc = document.querySelector('.play_bc > img')
-      let musicInfoShow = document.querySelector('.music_info')
+      let stateSet = document.querySelector('.state_set') as HTMLElement
+      let musicHead = document.querySelector('.head') as HTMLElement
+      let musicOBJ = document.querySelector('audio') as HTMLAudioElement
+      let proLine = document.querySelector('.pros') as HTMLElement
+      let timeshow = document.querySelector('.time_show') as HTMLElement
+      let musicLineMoveFa = document.querySelector('.progress') as HTMLElement
+      let musicLineMove = document.querySelector('.pros') as HTMLElement
+      let volumeBtn = document.querySelector('.volume') as HTMLElement
+      let volumeBar = document.querySelector('.volume_range') as HTMLElement
+      let volumePro = document.querySelector('.range') as HTMLInputElement
+      let musicLast = document.querySelector('.last') as HTMLElement
+      let musicNext = document.querySelector('.next') as HTMLElement
+      let musicBOXbc = document.querySelector('.play_bc > img') as HTMLElement
+      let musicInfoShow = document.querySelector('.music_info') as HTMLElement
       return {
         stateSet,
         musicHead,
@@ -161,15 +165,15 @@ export default defineComponent({
       const { musicOBJ, proLine, timeshow } = this.setupLocalVar()
       let time = Math.floor(musicOBJ.duration)
       let minute = Math.floor(time / 60) + ''
-      minute = minute < 10 ? '0' + minute : minute
+      minute = Math.floor(time / 60) < 10 ? '0' + minute : minute
       let second = time % 60 + ''
-      second = second < 10 ? '0' + second : second
+      second = time % 60 < 10 ? '0' + second : second
       this.time4 = setInterval(() => {
         let muscurrtime = musicOBJ.currentTime
         let currminute = Math.floor(muscurrtime / 60) + ''
-        currminute = currminute < 10 ? '0' + currminute : currminute
+        currminute = Math.floor(muscurrtime / 60) < 10 ? '0' + currminute : currminute
         let currsecond = Math.floor(muscurrtime % 60) + ''
-        currsecond = currsecond < 10 ? '0' + currsecond : currsecond
+        currsecond = Math.floor(muscurrtime % 60) < 10 ? '0' + currsecond : currsecond
         timeshow.innerText = `${currminute}:${currsecond} / ${minute}:${second}`
 
       }, 1)
@@ -184,7 +188,7 @@ export default defineComponent({
       clearInterval(this.time2)
       clearInterval(this.time4)
     },
-    musicMoveFa() {
+    musicMoveFa(event: MouseEvent) {
       const { musicOBJ, proLine } = this.setupLocalVar()
       clearInterval(this.time)
       clearInterval(this.time2)
@@ -214,15 +218,16 @@ export default defineComponent({
     volumeSet() {
       const { volumePro, volumeBar } = this.setupLocalVar()
       volumePro.autofocus = true
-      volumePro.defaultValue = 100
-      volumePro.step = 1
-      volumePro.max = 100
-      volumePro.min = 0
+      volumePro.defaultValue = '100'
+      volumePro.step = '1'
+      volumePro.max = '100'
+      volumePro.min = '0'
       volumeBar.style.height = '100px'
       volumeBar.style.padding = '5px'
       volumeBar.style.top = '50px'
     },
     volumeBtn() {
+      console.log("double click")
       const { volumePro, volumeBtn, musicOBJ } = this.setupLocalVar()
       if (this.f2) {
         volumePro.disabled = true
@@ -242,16 +247,15 @@ export default defineComponent({
       volumeBar.style.padding = '0px'
       volumeBar.style.top = '0px'
     },
-    volumePro() {
+    volumePros() {
       const { volumePro, musicOBJ, volumeBtn } = this.setupLocalVar()
-      volumeBtn.onclick = null
-      this.onchange = function() {
-        musicOBJ.volume = this.value / 100
-        console.log(this.value)
-        if (this.value === 0) {
-          volumeBtn.className = 'volume iconfont icon-volumeDisable'
-          this.f2 = false
-        }
+      // volumeBtn.onclick = null
+      musicOBJ.volume = Number(volumePro.value) / 100
+      console.log(Number(volumePro.value))
+      if (Number(volumePro.value) === 0) {
+        volumeBtn.className = 'volume iconfont icon-volumeDisable'
+        this.f2 = false
+        this.musicStop()
       }
     },
     musicLast() {

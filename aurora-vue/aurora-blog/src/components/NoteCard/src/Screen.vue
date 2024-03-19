@@ -1,4 +1,4 @@
-<script setup lang="js">
+<script lang="ts">
 import Typed from '@/styles/source/js/typed.min.js'
 import { defineComponent, ref } from 'vue'
 export default defineComponent({

@@ -94,7 +94,7 @@
       <div>
         <template v-if="note.noteContent">
           <div class="post-html">
-            <div class="markdown-body" ref="articleRef" v-html="note.noteContent" />
+            <div class="markdown-body" ref="noteRef" v-html="note.noteContent" />
           </div>
         </template>
         <div v-else class="bg-ob-deep-800 px-14 py-16 rounded-2xl shadow-xl block min-h-screen">
@@ -251,6 +251,7 @@ export default defineComponent({
       v3ImgPreviewFn({ images: reactiveData.images, index: reactiveData.images.indexOf(index) })
     }
     const initTocbot = () => {
+      console.log("文章标题初始化成功")
       let nodes = noteRef.value.children
       if (nodes.length) {
         for (let i = 0; i < nodes.length; i++) {

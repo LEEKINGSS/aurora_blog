@@ -131,6 +131,6 @@ export default defineComponent({
   color: var(--text-note-header)
 }
 .player{
-  padding-left: 25%;
+  padding-left: 18%;
 }
 </style>
