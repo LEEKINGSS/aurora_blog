@@ -250,17 +250,19 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
         }
         note.setNoteTime(getReadTime(count));
         note.setNoteCount(count);
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode jsonNode;
-        if (!Objects.equals(note.getNoteQuotes(), "") && note.getNoteQuotes() != null) {
-            try {
-                jsonNode = objectMapper.readTree(baiduTranslateStrategy.getTransResult(note.getNoteQuotes(), "auto", "en"));
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
-            }
-            String translation = jsonNode.get("trans_result").get(0).get("dst").asText();
-            if (Objects.nonNull(note.getNoteQuotes())) {
-                note.setNoteQuotes(note.getNoteQuotes() + "|" + translation);
+        if (!note.getNoteQuotes().contains("|")){
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode jsonNode;
+            if (!Objects.equals(note.getNoteQuotes(), "") && note.getNoteQuotes() != null) {
+                try {
+                    jsonNode = objectMapper.readTree(baiduTranslateStrategy.getTransResult(note.getNoteQuotes(), "auto", "en"));
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException(e);
+                }
+                String translation = jsonNode.get("trans_result").get(0).get("dst").asText();
+                if (Objects.nonNull(note.getNoteQuotes())) {
+                    note.setNoteQuotes(note.getNoteQuotes() + "|" + translation);
+                }
             }
         }
         if(note.getId() != null){

@@ -104,7 +104,7 @@
         SELECT a.id                         AS id,
                note_cover,
                note_title,
-               SUBSTR(note_content, 1, 300) AS note_content,
+               SUBSTR(note_content, 1, 100) AS note_content,
                is_featured,
                status,
                a.create_time                AS create_time,
@@ -147,7 +147,7 @@
         SELECT a.id                         AS id,
                note_cover,
                note_title,
-               SUBSTR(note_content, 1, 300) AS note_content,
+               SUBSTR(note_content, 1, 100) AS note_content,
                is_featured,
                status,
                a.create_time                AS create_time,
@@ -385,7 +385,7 @@
         SELECT a.id                         AS id,
                note_cover,
                note_title,
-               SUBSTR(note_content, 1, 300) AS note_content,
+               SUBSTR(note_content, 1, 100) AS note_content,
                is_featured,
                STATUS,
                a.create_time                AS create_time,
@@ -528,11 +528,11 @@
         is_featured DESC,
         a.id DESC
     </select>
-        <select id="listNoteStatistics" resultType="com.aurora.model.dto.ArticleStatisticsDTO">
-            SELECT DATE_FORMAT(create_time, "%Y-%m-%d") AS date,
+    <select id="listNoteStatistics" resultType="com.aurora.model.dto.ArticleStatisticsDTO">
+        SELECT DATE_FORMAT(create_time, "%Y-%m-%d") AS date,
                    COUNT(1)                             AS count
-            FROM t_note
-            GROUP BY date
-            ORDER BY date DESC
-        </select>
+        FROM t_note
+        GROUP BY date
+        ORDER BY date DESC
+    </select>
 </mapper>
